@@ -1,0 +1,250 @@
+<div class="gp-device-list header-container">
+    <div class="header-item">
+    <!--   <mat-button-toggle-group #group="matButtonToggleGroup">
+        <mat-button-toggle value="1" [checked]='true'><i class="fa fa-file header-mode"></i></mat-button-toggle>
+        <mat-button-toggle value="2" ><i class="fa fa-list header-mode"></i></mat-button-toggle>
+      </mat-button-toggle-group> -->
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default"><i class="fa fa-file header-mode"></i></button>
+        <button type="button" class="btn btn-default"><i class="fa fa-list header-mode"></i></button>
+      </div>
+       <!-- <mat-slide-toggle  class=" slide-toggle-problem" [color]="'warn'"[checked]="onlyProblems"
+         [(ngModel)]="onlyProblems"
+         (change)="filterProblems()">
+         Attention Required
+       </mat-slide-toggle> -->
+       <div class="btn-group device-list-switch-toggle ">
+        <label class="c8y-switch">
+            <input type="checkbox" checked="checked" />
+            <span></span> Attention Required
+          </label>
+       </div>
+  
+    </div>
+    <div class="header-item ">
+     <!--  <div class="filter-panel">
+      <span class="gp-device-list-form-search"><i class="fa fa-search"></i></span>
+      <mat-form-field class="gp-device-list-form ">
+        <input matInput (keyup)="applyFilter()" [(ngModel)]="filterValue"
+          placeholder="Enter Device Name, Id, External Id, Alerts Type, etc.">
+      </mat-form-field>
+    </div> -->
+    <div id="search" class="input-group input-group-search">
+        <input
+          type="search"
+          class="form-control"
+          placeholder="Enter Device Name, Id, External Id, Alerts Type, etc."
+          (keyup)="applyFilter()" [(ngModel)]="filterValue"
+        />
+        <span class="input-group-addon">
+          <i c8yIcon="search" *ngIf="!filterValue || filterValue.length === 0"></i>
+          <i
+            c8yIcon="times"
+            class="text-muted"
+            *ngIf="filterValue && filterValue.length > 0"
+            (click)="filterValue= ''"
+          ></i>
+        </span>
+      </div>
+    </div>
+    <div class="header-item">
+      <div class="refresh-panel">
+        <button type="button" class="btn btn-link c8y-realtime" title="Toggle realtime" (click)="toggle()">
+          <span [ngClass]="realtimeState ? 'c8y-pulse active' : 'c8y-pulse inactive'"></span>
+          <span>Realtime</span>
+        </button>
+        <button mat-icon-button type="button" class="button refresh-button" (click)="refresh()"><span class="fa fa-refresh"></span></button>
+      </div>
+  
+    </div>
+  </div>
+ <!--  <mat-divider></mat-divider> -->
+  <!-- <mat-progress-bar *ngIf="isBusy" mode="indeterminate"></mat-progress-bar> -->
+   <mat-paginator *ngIf="totalRecord !== -1" class="device-list-pagination-view" [length]="totalRecord"
+     [pageSizeOptions]="[5,10,20,50,100]" [pageSize]="pageSize" (page)="getPageEvent($event)"></mat-paginator>
+  <div class="card-wrapper" *ngIf="group.value === '1' && !isBusy">
+        <div class="book " *ngFor="let ndevice of filterData" [ngClass]="{'cover': ndevice.isBookOpen === true}">
+          <div class="back"></div>
+          <div class="page1">
+            <div class="page1-transform">
+              <div class="heading open" title="{{ndevice.name}}">{{ndevice.name}}</div>
+              <div>
+                <div class="display-text-pages" *ngFor="let page1 of _config.p1Props">
+                  
+                    <b>{{page1.label}}</b> : 
+                    <p *ngIf="page1.id === 'creationTime' || page1.id === 'lastUpdated'; else elsePage1 "
+                       class="gp-dl-value" title="{{ getTheValue(ndevice, page1.value)  | date:'d MMMM yyyy HH:mm'}}">
+                      {{ getTheValue(ndevice, page1.value) === undefined || getTheValue(ndevice, page1.value).length === 0? 'Not available' : getTheValue(ndevice, page1.value) | date:'d MMMM yyyy HH:mm' }}
+                    </p>
+                    <ng-template #elsePage1>
+                         <p class="gp-dl-value" title="{{ getTheValue(ndevice, page1.value) }}">
+                           {{ getTheValue(ndevice, page1.value) === undefined || getTheValue(ndevice, page1.value).length === 0? 'Not available' : getTheValue(ndevice, page1.value)}}
+                         </p>
+                    </ng-template>
+                    
+                </div>
+            </div>
+              <!-- <div class="display-text-pages" *ngIf="ndevice.c8y_Firmware" title=" {{ndevice.c8y_Firmware.name}}">Firmware
+                name:{{ndevice.c8y_Firmware.name}}
+              </div>
+              <div class="display-text-pages" *ngIf="ndevice.c8y_Firmware"  title="{{ndevice.c8y_Firmware.version}}">
+                Firmware
+                Version:{{ndevice.c8y_Firmware.version}}
+              </div>
+            <div class="display-text-pages" *ngIf="ndevice.deviceExternalDetails"
+  
+  
+               title="{{ndevice.deviceExternalDetails.externalId}}">External
+           Id:{{ndevice.deviceExternalDetails.externalId}}
+              </div>
+               <div class="display-text-pages" *ngIf="ndevice.deviceExternalDetails"
+                  title="{{ndevice.deviceExternalDetails.externalType}}">External
+                 Type:{{ndevice.deviceExternalDetails.externalType}}
+               </div> -->
+            </div>
+          </div>
+          <div class="page2">
+              <span class="page-flip" (click)="ndevice.isBookOpen =  !ndevice.isBookOpen"></span>
+              <div class="page2-displayText">
+                <div class="heading open" title="{{ndevice.name}}">{{ndevice.name}}</div>
+                <div>
+                    <div class="display-text-pages" *ngFor="let page2 of _config.p2Props">
+                        <b>{{page2.label}}</b> : 
+                        <p *ngIf="page2.id === 'creationTime' || page2.id === 'lastUpdated'; else elsePage2 " class="gp-dl-value"
+                          title="{{ getTheValue(ndevice, page2.value) | date:'d MMMM yyyy HH:mm' }}">
+                          {{ getTheValue(ndevice, page2.value) === undefined || getTheValue(ndevice, page2.value).length === 0? 'Not available' : getTheValue(ndevice, page2.value) | date:'d MMMM yyyy HH:mm'}}
+                        </p>
+                        <ng-template #elsePage2>
+                              <p class="gp-dl-value" title="{{ getTheValue(ndevice, page2.value) }}">
+                                {{ getTheValue(ndevice, page2.value) === undefined || getTheValue(ndevice, page2.value).length === 0? 'Not available' : getTheValue(ndevice, page2.value)}}
+                              </p>
+                        </ng-template>
+                    </div>
+                </div>
+                <!-- <div class="display-text-pages">Device Id:{{ndevice.id}}</div>
+                 <div class="display-text-pages">Device Type:{{ndevice.type}}</div>
+                <div class="display-text-pages" title="{{ndevice.creationTime | date:'d MMMM yyyy HH:mm'}}">Creation Time:
+                  {{ndevice.creationTime | date:'d MMMM yyyy HH:mm'}}</div>
+                <div class="display-text-pages" title="{{ndevice.lastUpdated | date:'d MMMM yyyy HH:mm'}}">Last Updated:
+                  {{ndevice.lastUpdated | date:'d MMMM yyyy HH:mm'}}</div>
+                <div class="display-text-pages" *ngIf="ndevice.c8y_Connection">
+                  Status:{{ndevice.c8y_Connection.status}}</div> -->
+              </div>
+          </div>
+          <div class="front">
+            <span *ngIf="showDashboardConfig"  class="gp-device-list-db-config"
+              (click)="showCreateDashboardDialog(ndevice.deviceListDynamicDashboards, ndevice.id, ndevice.name)"><i
+                class="fa fw fa-cog"></i></span>
+            <span class="page-flip" (click)="ndevice.isBookOpen =  !ndevice.isBookOpen"></span>
+             <div class="heading" title="{{ndevice.name}}">{{ndevice.name}}</div>
+             <div class="display-text">Device Id:{{ndevice.id}}</div>
+             <div class="device-header-image">
+                 <span
+                   (click)="navigateURL(ndevice.deviceListDynamicDashboards, ndevice.id, ndevice.name);
+                   ndevice.switchToDashboard = true;"><img
+                   [src]="getImage(ndevice.image)"></span>
+             </div>
+             
+              <div class="display-text" *ngIf="ndevice.deviceExternalDetails" title="
+                {{ndevice.deviceExternalDetails.externalId}}">External
+                Id:{{ndevice.deviceExternalDetails.externalId}}
+              </div>
+              <!-- <mat-divider></mat-divider> -->
+  
+              <div>
+                <div class="display-text-pages front-page-ellipsis-parent" *ngFor="let fpProps of _config.fpProps">
+                    <div class="risk display-text-status display-text-status-green" *ngIf="ndevice.availability && fpProps === 'Availability'"
+                      [ngClass]="[ndevice.availability === 'UNAVAILABLE' ? 'display-text-status-red ': '',
+                       ndevice.availability === 'Partial' ? 'display-text-status-yellow ': '']">
+                      <i class="fa fw fa-exclamation-triangle" *ngIf="ndevice.availability === 'UNAVAILABLE' || ndevice.availability === 'Partial'"></i>
+                      <ng-template #available><i class="fa fw fa-check-circle"></i></ng-template>
+                      {{ndevice.availability === 'UNAVAILABLE' ? 'Unavailable' : ndevice.availability === 'AVAILABLE' ? 'Available' : 'Partial'}}
+                    </div>
+                    <div class="fixed-height risk" *ngIf="ndevice.alertDetails && fpProps === 'ActiveAlarmsStatus' && isAlerts(ndevice.alertDetails)">
+                      <span class="display-text " *ngIf="isAlerts(ndevice.alertDetails)"
+                        [ngClass]="isAlertsColor(ndevice.alertDetails)" 
+                        title="{{loadText(ndevice.alertDetails)}}" >
+                          <i class="fa fw fa-exclamation-triangle"></i> Alerts
+                         <!--  <mat-basic-chip [disableRipple] = 'true' class="demo-chips"
+                            [ngClass]="isAlertsBGColor(ndevice.alertDetails)">
+                            {{getTotalAlerts(ndevice.alertDetails)}}
+                          </mat-basic-chip> -->
+                      </span>
+                    </div>
+                    <div class="fixed-height risk front-page-ellipsis" *ngIf="fpProps === 'Other' && getTheValue(ndevice, otherProp.value) !== undefined"
+                     title="{{getTheValue(ndevice, otherProp.value)}}">
+                      {{otherProp.label}} {{ getTheValue(ndevice, otherProp.value) }}
+                    </div>
+                    <div class="risk " style="text-align: left;" *ngIf="ndevice.c8y_Firmware && fpProps === 'FirmwareStatus' && calculateFirmwareRisk(ndevice.c8y_Firmware.version) < 0"
+                      [ngSwitch]="">
+                      <!-- <mat-basic-chip *ngIf="calculateFirmwareRisk(ndevice.c8y_Firmware.version) < 0" [disableRipple]='true'
+                        class="demo-chips-risk " [ngClass]="{'warningAlerts2':
+                        calculateFirmwareRisk(ndevice.c8y_Firmware.version) === -1,
+                        'minorAlerts2': calculateFirmwareRisk(ndevice.c8y_Firmware.version) === -2,
+                        'criticalAlerts2': calculateFirmwareRisk(ndevice.c8y_Firmware.version) === -3
+                        }">
+                        <div> <i class=" fa fw fa-exclamation-triangle"></i> Firmware Risk:
+                          {{ getFirmwareRisk(ndevice.c8y_Firmware.version) }} </div>
+                      </mat-basic-chip> -->
+                    </div>
+                  
+                </div>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div *ngIf="group.value === '2' && !isBusy">
+    <table  mat-table [dataSource]="dataSource" matSort class="device-list-table">
+  
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+        <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="externalId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> External ID </th>
+        <td mat-cell *matCellDef="let row"> {{row.externalId}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="lastUpdated">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Updated </th>
+        <td mat-cell *matCellDef="let row"> {{row.lastUpdated | date:'d MMMM yyyy HH:mm'}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="FirmwareStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Firmware Status </th>
+        <td mat-cell *matCellDef="let row" > {{row.firmwareStatus}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="Availability">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Availability </th>
+        <td mat-cell *matCellDef="let row" > {{row.availability}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="ActiveAlarmsStatus">
+        <th mat-header-cell *matHeaderCellDef > Alerts </th>
+        <td mat-cell *matCellDef="let row" >
+          <span  *ngIf="isAlerts(row.alertDetails)"
+            [ngClass]="isAlertsColor(row.alertDetails)" title="{{loadText(row.alertDetails)}}">
+           <!--  <mat-basic-chip [disableRipple]='true' class="demo-chips" [ngClass]="isAlertsBGColor(row.alertDetails)">
+              {{getTotalAlerts(row.alertDetails)}}
+            </mat-basic-chip> -->
+          </span>
+        </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="Other">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{otherProp.label}} </th>
+        <td mat-cell *matCellDef="let row" > {{ row.other }} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+      </tr>
+    </table>
+    </div>

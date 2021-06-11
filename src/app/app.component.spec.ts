@@ -16,16 +16,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'cumulocity-asset-viewer-widget'`, () => {
+  it(`should have as title 'gp-devices-list-project'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('cumulocity-asset-viewer-widget');
+    expect(app.title).toEqual('gp-devices-list-project');
   });
 
   it('should render title in a h1 tag', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to cumulocity-asset-viewer-widget!');
+    expect(compiled.querySelector('h1').textContent).toContain('Welcome to gp-devices-list-project!');
   });
 });

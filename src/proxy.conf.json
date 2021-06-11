@@ -1,0 +1,8 @@
+{
+    "/": {
+    "target": "https://presalesind.eu-latest.cumulocity.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+        }
+    }

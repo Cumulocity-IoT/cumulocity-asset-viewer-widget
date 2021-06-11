@@ -17,7 +17,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "gp-asset-viewer": [
+        "dist/gp-asset-viewer"
+      ],
+      "gp-asset-viewer/*": [
+        "dist/gp-asset-viewer/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

@@ -82,9 +82,9 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.appId = this.appIdService.getCurrentAppId();
     if (!this._config.device && isDevMode()) {
-      this.group = '2313610';
+      this.group = '129';
       this._config = {
-        fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other'],
+        fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
         p1Props : [
                   {id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable'},
                   {id: 'id', label: 'id', value: 'id'},
@@ -111,7 +111,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
       ];
       this.withTabGroup = true;
-      this.appId = '23531';
+      //this.appId = '23531';
      // this.defaultImageId = '2559607';
     } else {
       this.group = this._config.device ? this._config.device.id : '';
@@ -210,37 +210,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
           externalData = await this.getExternalId(x.id);
           if (externalData && (!x.deviceExternalDetails || x.deviceExternalDetails.externalId !== externalData.externalId)) {
             await this.updateDeviceObjectForExternalId(x.id, externalData);
-          }
-       }
-        // this.cleanDeviceObjectForDashboards(x.id);
-        if (this.hasAdminRole() && this.appId ) {
-        // if (false) {
-          const configDashboard = this.configDashboardList.find((deviceDB) =>
-            (deviceDB.type === 'All' && deviceDB.templateID) || (deviceDB.type === x.type && deviceDB.templateID)) ;
-          if (configDashboard && (!x.deviceListDynamicDashboards || x.deviceListDynamicDashboards.length === 0)) {
-            //  console.log('create template for dashboard');
-            const externalId = (externalData ? externalData.externalId :
-              (x.deviceExternalDetails ? x.deviceExternalDetails.externalId : ''));
-            await this.addClonedDashboard(configDashboard.dashboardName,
-              configDashboard.templateID, this.dashboardIcon, x.name, x.id, externalId + ' ' + x.name,
-              (this.withTabGroup ? externalId : ''));
-          } else if (configDashboard) {
-            const currentDashbordObj = x.deviceListDynamicDashboards.find((dashboard: any) => dashboard.appId === this.appId &&
-              dashboard.deviceGroupId === this.group);
-            // const configDashboardObj = this.configDashboardList.find((deviceDB) => deviceDB.type === x.type);
-            if (!currentDashbordObj || (currentDashbordObj && currentDashbordObj.templateId !== configDashboard.templateID)) {
-              //   console.log('template changed or does not exist');
-              const externalId = (externalData ? externalData.externalId :
-                (x.deviceExternalDetails ? x.deviceExternalDetails.externalId : ''));
-              await this.addClonedDashboard(configDashboard.dashboardName,
-                configDashboard.templateID, this.dashboardIcon, x.name, x.id, externalId + ' ' + x.name,
-                (this.withTabGroup ? externalId : ''));
-            } else if (currentDashbordObj && currentDashbordObj.dashboardName !== configDashboard.dashboardName) {
-             //  console.log('update only dashboard name');
-              await this.updateApplicationDashboards(currentDashbordObj.dashboardId,
-                (x.deviceExternalDetails ? x.deviceExternalDetails.externalId + ' ' + x.name : x.name), x.id,
-                configDashboard.dashboardName, (this.withTabGroup ? x.deviceExternalDetails.externalId : ''));
-            }
           }
        }
         if (this.realtimeState) {

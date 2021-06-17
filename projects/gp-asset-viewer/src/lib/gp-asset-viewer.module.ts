@@ -7,12 +7,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { NewDashboardModalComponent } from './new-dashboard-modal.component';
 import { GpAssetOverviewAppIdService } from './gp-asset-overview-app-id.service';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
+import {GpAssetViewerConfigComponent} from './gp-asset-overview-config/gp-asset-overview-config.component';
+import {NgSelectModule} from '@ng-select/ng-select';
 @NgModule({
-  declarations: [GpAssetViewerComponent, NewDashboardModalComponent],
+  declarations: [GpAssetViewerComponent, GpAssetViewerConfigComponent],
   imports: [
     CoreModule,
     FormsModule,
@@ -21,10 +23,12 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     MatPaginatorModule,
     MatSortModule,
     TypeaheadModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    AccordionModule.forRoot(),
+    NgSelectModule
   ],
-  exports: [GpAssetViewerComponent, NewDashboardModalComponent],
-  entryComponents: [GpAssetViewerComponent, NewDashboardModalComponent],
+  exports: [GpAssetViewerComponent, GpAssetViewerConfigComponent],
+  entryComponents: [GpAssetViewerComponent, GpAssetViewerConfigComponent],
   providers: [
     GpAssetViewerService, GpAssetOverviewAppIdService,
     {
@@ -36,7 +40,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
         previewImage: preview.previewImage,
         description: 'Asset Viewer Widget with navigation to asset specific dashboard',
         component: GpAssetViewerComponent,
-        configComponent: GpAssetViewerComponent,
+        configComponent: GpAssetViewerConfigComponent,
         data: {
           ng1: {
             options: {

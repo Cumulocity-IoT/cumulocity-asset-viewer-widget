@@ -94,15 +94,12 @@
               </div>
           </div>
           <div class="front">
-            <span *ngIf="showDashboardConfig"  class="gp-device-list-db-config"
-              (click)="showCreateDashboardDialog(ndevice.deviceListDynamicDashboards, ndevice.id, ndevice.name)"><i
-                class="fa fw fa-cog"></i></span>
             <span class="page-flip" (click)="ndevice.isBookOpen =  !ndevice.isBookOpen"></span>
              <div class="heading" title="{{ndevice.name}}">{{ndevice.name}}</div>
              <div class="display-text">Device Id:{{ndevice.id}}</div>
              <div class="device-header-image">
                  <span
-                   (click)="navigateURL(ndevice.deviceListDynamicDashboards, ndevice.id, ndevice.name);
+                   (click)="navigateURL( ndevice.id, ndevice.type);
                    ndevice.switchToDashboard = true;"><img
                    [src]="getImage(ndevice.image)"></span>
              </div>
@@ -157,7 +154,7 @@
   
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-        <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+        <td mat-cell *matCellDef="let row">  <a href="#" (click)="navigateURL( row.id, row.type)">{{row.id}}</a>  </td>
       </ng-container>
   
       <ng-container matColumnDef="name">

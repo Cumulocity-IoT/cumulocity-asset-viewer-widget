@@ -27,7 +27,7 @@ export class GpAssetViewerService {
   getAllDevices(pageToGet: number, allDevices: { data: any[], res: any }): Promise<IResultList<IManagedObject>> {
     const inventoryFilter = {
       fragmentType: 'c8y_IsDevice',
-      pageSize: 50,
+      pageSize: 2000,
       withTotalPages: true,
       currentPage: pageToGet
     };

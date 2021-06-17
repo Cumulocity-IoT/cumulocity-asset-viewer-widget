@@ -1,0 +1,208 @@
+<div class="form-group">
+  <c8y-form-group>
+    <accordion [isAnimated]="true" [closeOthers]="true">
+      <accordion-group panelClass="asset-overview-accordian-panel" #assetConfigGroup>
+        <button class="btn btn-link btn-block clearfix" accordion-heading type="button">
+          <div class="pull-left float-left">Front Page Settings
+            <span title="Properties selected are displayed in the front page of the book. 
+            Maximum of 3 properties can be selected">
+              <i class="fa fa-question-circle"></i></span>
+          </div>
+          <span class="float-right pull-right"><i *ngIf="assetConfigGroup.isOpen" class="fa fa-caret-up"></i>
+          <i *ngIf="!assetConfigGroup.isOpen" class="fa fa-caret-down"></i></span>
+        </button>
+        <div class="config-accordion">
+          <div class="form-group">
+            <ng-select [items]="properties" bindLabel="prop" name="FrontPageProperties" required [multiple]="true" [closeOnSelect]="false" [searchable]="true"
+            placeholder="Select properties" bindValue="prop"appendTo="body" (change)="onFpChange()" maxSelectedItems="3" [formControl]="props" >
+            </ng-select>
+          </div>
+          </div>
+          <div *ngIf="otherProp">
+            <b>Since you selected Other, property name and value must be entered </b>
+            <br />
+            <label>Label </label>
+            <input type="text" class="form-control input-width" placeholder="eg. Position"
+              [(ngModel)]="config.otherProp.label" id="label">
+            <label>Value </label>
+            <input type="text" class="form-control input-width" placeholder="eg. c8y_Position"
+              [(ngModel)]="config.otherProp.value" id="value">
+          </div>
+       
+      </accordion-group>
+    <accordion-group panelClass="asset-overview-accordian-panel" #assetConfigGroup2>
+      <button class="btn btn-link btn-block clearfix" accordion-heading type="button">
+        <div class="pull-left float-left">Page 1 Settings
+          <span title="Properties selected are displayed in the page 1 of the book. 
+          Maximum 5 properties can be selected">
+            <i class="fa fa-question-circle"></i></span>
+        </div>
+        <span class="float-right pull-right"><i *ngIf="assetConfigGroup2.isOpen" class="fa fa-caret-up"></i>
+        <i *ngIf="!assetConfigGroup2.isOpen" class="fa fa-caret-down"></i></span>
+      </button>
+      <div class="config-accordion" >
+        <form [formGroup]="p1Props">
+          <ng-select [items]="propertiesToDisplay" bindLabel="id"  required [multiple]="true" 
+          [closeOnSelect]="false" [searchable]="true"  placeholder="Select upto 5 properties" 
+          appendTo="body" (change)="onP1Change()" maxSelectedItems="5" formControlName="p1Props" >
+            </ng-select>
+        </form>
+        <ng-container *ngIf="p1Props.get('p1Props').value?.length > 0">
+          <table mat-table [dataSource]="p1DataSource" class="gp-floor-table">
+
+            <ng-container matColumnDef="label">
+              <mat-header-cell *matHeaderCellDef> Label </mat-header-cell>
+              <mat-cell *matCellDef="let row; let i = index">
+                  <input type="text" class="form-control" (change)="commitToP1PropsConfig(p1DataSource)" [(ngModel)]="row.label"
+                  id="label1-{{i}}" >
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="property">
+              <mat-header-cell *matHeaderCellDef> Property </mat-header-cell>
+              <mat-cell *matCellDef="let row; let i = index">
+                  <input class="form-control" type="text" [disabled]="row.id !== 'other'"
+                    (change)="commitToP1PropsConfig(p1DataSource)" [(ngModel)]="row.value" id="prop1-{{i}}" >
+              </mat-cell>
+            </ng-container>
+
+            <!-- Header and Row Declarations -->
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          </table>
+        </ng-container>
+      </div>
+      </accordion-group>
+      <accordion-group panelClass="asset-overview-accordian-panel" #assetConfigGroup3>
+        <button class="btn btn-link btn-block clearfix" accordion-heading type="button">
+          <div class="pull-left float-left">Page 2 Settings
+            <span title="Properties selected are displayed in the page 2 of the book. 
+            Maximum 5 properties can be selected">
+              <i class="fa fa-question-circle"></i></span>
+          </div>
+          <span class="float-right pull-right"><i *ngIf="assetConfigGroup3.isOpen" class="fa fa-caret-up"></i>
+          <i *ngIf="!assetConfigGroup3.isOpen" class="fa fa-caret-down"></i></span>
+        </button>
+        <div class="config-accordion" >
+          <form [formGroup]="p2Props">
+            <ng-select [items]="propertiesToDisplay" bindLabel="id"  required [multiple]="true" 
+            [closeOnSelect]="false" [searchable]="true"  placeholder="Select upto 5 properties" 
+            appendTo="body" (change)="onP2Change()" maxSelectedItems="5" formControlName="p2Props" >
+              </ng-select>
+          </form>
+          <ng-container *ngIf="p2Props.get('p2Props').value?.length > 0">
+            <table mat-table [dataSource]="p2DataSource" class="gp-floor-table">
+  
+              <ng-container matColumnDef="label">
+                <mat-header-cell *matHeaderCellDef> Label </mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index">
+                    <input type="text" class="form-control" (change)="commitToP2PropsConfig(p1DataSource)" [(ngModel)]="row.label"
+                    id="label2-{{i}}"  >
+                </mat-cell>
+              </ng-container>
+  
+              <ng-container matColumnDef="property">
+                <mat-header-cell *matHeaderCellDef> Property </mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index">
+                    <input class="form-control"  id="prop2-{{i}}" type="text" [disabled]="row.id !== 'other'"
+                      (change)="commitToP2PropsConfig(p1DataSource)" [(ngModel)]="row.value" >
+                </mat-cell>
+              </ng-container>
+  
+              <!-- Header and Row Declarations -->
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+            </table>
+          </ng-container>
+        </div>
+        </accordion-group>
+        <accordion-group *ngIf="appId" panelClass="asset-overview-accordian-panel" #assetConfigGroup4>
+          <button class="btn btn-link btn-block clearfix" accordion-heading type="button">
+            <div class="pull-left float-left">Dashboard Settings
+            </div>
+            <span class="float-right pull-right"><i *ngIf="assetConfigGroup4.isOpen" class="fa fa-caret-up"></i>
+            <i *ngIf="!assetConfigGroup4.isOpen" class="fa fa-caret-down"></i></span>
+          </button>
+          <div class="config-accordion" >
+            <div class="row" *ngFor="let dashboard of config.dashboardList;let i = index">
+              <div class="col-sm-12" *ngIf="dashboard.type">
+                <div class="col-sm-3">
+                  <ng-select [items]="deviceTypes" bindLabel="type"  
+                    [closeOnSelect]="false" [searchable]="true"  placeholder="Select Device Type" 
+                    appendTo="body" (change)="addNewRecord(i)" bindValue="type"  [(ngModel)]="dashboard.type" >
+                </ng-select>
+                </div>
+                <div class="col-sm-3">
+                   <input type="text" id="dashboarId{{i}}" class="form-control input-width" placeholder="Dashbaord ID" [(ngModel)]="dashboard.templateID">
+                </div>
+                <div class="col-sm-3">
+                  <div class="btn-group device-list-switch-toggle ">
+                    <label class="c8y-switch ">
+                        <input type="checkbox" id="withTabGroup{{i}}" [checked]="dashboard.withTabGroup" 
+                        [(ngModel)]="dashboard.withTabGroup">
+                        <span></span> DeviceId as TabGroup
+                      </label>
+                   </div>
+                </div>
+                <div class="col-sm-3" *ngIf="!dashboard.withTabGroup">
+                  <input type="text"  id="tabGroupID{{i}}" class="form-control input-width" placeholder="TabGroup ID(Optional)" [(ngModel)]="dashboard.tabGroupID">
+               </div>
+              </div>
+            </div>
+          </div>
+          </accordion-group>
+   </accordion>    
+   <div class="row col-sm-12">
+     <div class="col-sm-6">
+      <div class="btn-group device-list-switch-toggle ">
+        <label class="c8y-switch ">
+            <input type="checkbox" [checked]="config.realtime" 
+            [(ngModel)]="config.realtime">
+            <span></span> Realitme
+          </label>
+       </div>
+     </div>
+     <div class="col-sm-6">
+      <div class="btn-group device-list-switch-toggle ">
+        <label class="c8y-switch ">
+            <input type="checkbox" [checked]="config.isRuntimeExternalId" 
+            [(ngModel)]="config.isRuntimeExternalId">
+            <span></span> Get Runtime External Id
+          </label>
+       </div>
+     </div>
+   </div>
+   <div class="row">
+    <div class="col-sm-6 form-horizontal">
+       <div class="col-sm-12 form-group">
+                <label for="pageSize" class=" col-sm-6 control-label">Default Page Size:</label>
+                <div class="col-sm-6 ">
+                    <select  [(ngModel)]="config.pageSize" name="pageSize" id="pageSize">
+                        <option *ngFor="let pageSize of pageSizeList"
+                          [selected]="config.pageSize === pageSize"
+                        [ngValue]='pageSize'>
+                            {{pageSize}}</option>
+                    </select>
+                </div>
+            </div>
+    </div>
+  </div>
+   <div class="row">
+     <div class="col-sm-12 form-horizontal">
+       <div class="col-sm-12 form-group">
+         <label for="deviceImage" class="col-sm-4 control-label">Upload Default Image:</label>
+         <div class="col-sm-4">
+           <input type="file" id="deviceImage" class="gp-max" #deviceImage accept=".JPG, .JPEG, .PNG" (click)="$event.stopPropagation()"
+             (change)="LoadDefaultFile(deviceImage)" />
+            
+         </div>
+         <div class="col-sm-4">
+            <button *ngIf="!busy" class="btn btn-default" (click)="uploadFile()">Upload File</button>
+            <div *ngIf="busy" class="device-list-blinkingText">Uploading... Please wait.. </div>
+         </div>
+       </div>
+     </div>
+   </div>
+  
+  </c8y-form-group>
+</div>

@@ -4,7 +4,7 @@
     "styles/**/*"
   ],
   "lib": {
-    "entryFile": "../projects/gp-devices-list/src/public_api.ts",
+    "entryFile": "../projects/gp-asset-viewer/src/public-api.ts",
     "umdModuleIds": {
       "@c8y/ngx-components": "@c8y/ngx-components"
     },

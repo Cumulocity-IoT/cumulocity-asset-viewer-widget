@@ -1,7 +1,7 @@
 {
-  "name": "Devices List Runtime Widget",
-  "contextPath": "devices-list-runtime-widget",
-  "key": "devices-list-runtime-widget-application-key",
+  "name": "Asset Viewer Runtime Widget",
+  "contextPath": "asset-viewer-runtime-widget",
+  "key": "asset-viewer-runtime-widget-application-key",
   "contentSecurityPolicy": "default-src 'self'",
   "icon": {
     "class": "fa fa-delicious"

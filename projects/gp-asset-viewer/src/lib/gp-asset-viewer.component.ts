@@ -11,7 +11,6 @@ import { skip, takeUntil } from 'rxjs/operators';
 import { GpAssetOverviewAppIdService } from './gp-asset-overview-app-id.service';
 import { GpAssetViewerService } from './gp-asset-viewer.service';
 import * as ImageData from './gp-default-image';
-import { NewDashboardModalComponent } from './new-dashboard-modal.component';
 
 export interface DeviceData {
   id?: string;
@@ -22,6 +21,7 @@ export interface DeviceData {
   availability?: string;
   alertDetails?: any;
   other?: any;
+  type?: any;
 }
 
 @Component({
@@ -42,11 +42,10 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   deviceListData = [];
   isBookOpen = false;
   dashboardIcon = 'th';
-  appId = '23531' ; // '13996';
-  group = '2313610'; // 129 ; // 129; // 48079956 ; this.config.groupId;
+  appId = '' ;
+  group = '';
   configDashboardList = [];
   withTabGroup = false;
-//  widgetId = '012121'; // ''; 698834
   filterValue = '';
   filterData = [];
   isBusy = false;
@@ -65,7 +64,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   showDashboardConfig = false;
   unsubscribeRealTime$ = new Subject<void>();
   bsModalRef: BsModalRef;
-
+  viewMode = '1';
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) { this.dataSource.sort = v; }
   @ViewChild(MatTable, { static: false }) matTable: MatTable<any>;
@@ -111,7 +110,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
       ];
       this.withTabGroup = true;
-      //this.appId = '23531';
+      // this.appId = '23531';
      // this.defaultImageId = '2559607';
     } else {
       this.group = this._config.device ? this._config.device.id : '';
@@ -252,21 +251,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
    });
   }
 
-  // show dialog box to create new dashboard
-  showCreateDashboardDialog(deviceListDynamicDashboards: any, deviceId: string, deviceName: string) {
-    let deviceDashboardObj = {};
-    if (this.hasAdminRole() && this.appId) {
-      if (deviceListDynamicDashboards && deviceListDynamicDashboards.length > 0) {
-        deviceDashboardObj = deviceListDynamicDashboards.find((dashboard) => dashboard.appId === this.appId &&
-          dashboard.deviceGroupId === this.group);
-      }
-      this.bsModalRef = this.modalService.show(NewDashboardModalComponent, {
-        class: 'c8y-wizard', initialState: { deviceDashboardObj, appId: this.appId, deviceId,
-          groupId: this.group, deviceName }
-      });
-    }
-  }
-
   // Check if current user is has adming access
   hasAdminRole() {
     return (this.userService.hasAllRoles(this.appStateService.currentUser.value,
@@ -345,6 +329,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
       deviceData.id = x.id;
       deviceData.name = x.name;
+      deviceData.type = x.type;
       deviceData.lastUpdated = x.lastUpdated;
       if (x.deviceExternalDetails) {
         deviceData.externalId = x.deviceExternalDetails.externalId;
@@ -459,22 +444,20 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   // Navigate URL to dashboard if dashboard is exist else it will redirect to dialog box to create new Dasboard
-  navigateURL(deviceListDynamicDashboards: any, deviceId: string, deviceName: string) {
-    if (deviceListDynamicDashboards) {
-      const dashboardObj = deviceListDynamicDashboards.find((dashboard) => dashboard.appId === this.appId &&
-        dashboard.deviceGroupId === this.group);
-      if (dashboardObj && dashboardObj.dashboardId) {
+  navigateURL(deviceId: string, deviceType: string) {
+    if (deviceType) {
+      const dashboardObj = this.configDashboardList.find((dashboard) => dashboard.type === deviceType);
+      if (dashboardObj && dashboardObj.templateID) {
         if (dashboardObj.tabGroup) {
           this.router.navigate([
-            `/application/${this.appId}/tabgroup/${dashboardObj.tabGroup}/dashboard/${dashboardObj.dashboardId}/device/${deviceId}`]);
+            `/application/${this.appId}/tabgroup/${deviceId}/dashboard/${dashboardObj.templateID}/device/${deviceId}`]);
+        } else if (dashboardObj.tabGroupID) {
+          this.router.navigate([
+            `/application/${this.appId}/tabgroup/${dashboardObj.tabGroupID}/dashboard/${dashboardObj.templateID}/device/${deviceId}`]);
         } else {
-          this.router.navigate([`/application/${this.appId}/dashboard/${dashboardObj.dashboardId}/device/${deviceId}`]);
+          this.router.navigate([`/application/${this.appId}/dashboard/${dashboardObj.templateID}/device/${deviceId}`]);
         }
-      } else {
-        this.showCreateDashboardDialog(deviceListDynamicDashboards, deviceId, deviceName);
       }
-    } else {
-      this.showCreateDashboardDialog(deviceListDynamicDashboards, deviceId, deviceName);
     }
    }
 

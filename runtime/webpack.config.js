@@ -53,7 +53,10 @@ module.exports = {
                 "@angular/platform-browser/animations": "AngularPlatformBrowserAnimations",
                 "@angular/router": "AngularRouter",
                 "@c8y/client": "C8yClient",
-                "@c8y/ngx-components": "C8yNgxComponents"
+                "@c8y/ngx-components": "C8yNgxComponents",
+                "@c8y/style": "C8yStyle",
+                "ngx-bootstrap": "NgxBootstrap",
+                "@c8y/ng1-modules": "C8yNg1Modules",
             },
         })
     ],

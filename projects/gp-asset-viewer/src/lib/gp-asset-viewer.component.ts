@@ -8,7 +8,6 @@ import { AppStateService } from '@c8y/ngx-components';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { skip, takeUntil } from 'rxjs/operators';
-import { GpAssetOverviewAppIdService } from './gp-asset-overview-app-id.service';
 import { GpAssetViewerService } from './gp-asset-viewer.service';
 import * as ImageData from './gp-default-image';
 
@@ -74,12 +73,11 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
               private sanitizer: DomSanitizer, private appService: ApplicationService,
               private deviceListService: GpAssetViewerService,
               private identityService: IdentityService, private router: Router, private modalService: BsModalService,
-              private userService: UserService, private appStateService: AppStateService,
-              private appIdService: GpAssetOverviewAppIdService) {
+              private userService: UserService, private appStateService: AppStateService) {
     }
 
   async ngOnInit() {
-    this.appId = this.appIdService.getCurrentAppId();
+    this.appId = this.deviceListService.getAppId();
     if (!this._config.device && isDevMode()) {
       this.group = '129';
       this._config = {
@@ -110,8 +108,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
       ];
       this.withTabGroup = true;
-      // this.appId = '23531';
-     // this.defaultImageId = '2559607';
     } else {
       this.group = this._config.device ? this._config.device.id : '';
       this.configDashboardList = this._config.dashboardList;
@@ -120,6 +116,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.isRuntimeExternalId = this._config.isRuntimeExternalId ? this._config.isRuntimeExternalId : false;
       this.defaultImageId = this._config.defaultImageId ? this._config.defaultImageId : null;
       this.pageSize = this._config.pageSize ? this._config.pageSize : this.pageSize;
+      this.viewMode = this._config.defaultListView ?  '2' : '1';
+      this.onlyProblems = this._config.attentionReq ? true : false;
     }
     this.otherProp = this._config.otherProp ? this._config.otherProp : '';
     this.displayedColumns = this.displayedColumns.concat(this._config.fpProps ? this._config.fpProps : []);
@@ -136,7 +134,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         res.blob().then((blb) => {
           this.defaultImageURL = URL.createObjectURL(blb);
           this.getDevices();
-          console.log(this.defaultImageURL);
         });
       });
     } else {
@@ -175,7 +172,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   getPageEvent(pageEvent) {
-    console.log('page Index = ' + pageEvent.pageIndex);
     this.pageSize = pageEvent.pageSize;
     this.currentPage = pageEvent.pageIndex + 1;
     this.unsubscribeRealTime$.next();
@@ -215,6 +211,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
           this.handleReatime(x.id);
         }
         this.matTableLoadAndFilter();
+        this.filterProblems();
         this.isBusy = false;
     });
   }
@@ -445,7 +442,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
   // Navigate URL to dashboard if dashboard is exist else it will redirect to dialog box to create new Dasboard
   navigateURL(deviceId: string, deviceType: string) {
-    if (deviceType) {
+    if (deviceType && this.appId) {
       const dashboardObj = this.configDashboardList.find((dashboard) => dashboard.type === deviceType);
       if (dashboardObj && dashboardObj.templateID) {
         if (dashboardObj.tabGroup) {
@@ -458,6 +455,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
           this.router.navigate([`/application/${this.appId}/dashboard/${dashboardObj.templateID}/device/${deviceId}`]);
         }
       }
+    } else if (deviceType) {
+      this.router.navigate([`/device/${deviceId}`]);
     }
    }
 
@@ -686,7 +685,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
   // Filter between all records or only for "Attention required"
   filterProblems() {
-    console.log(this._config.p2Props);
     if (this.onlyProblems) {
       this.filterData = this.filterData.filter(x => {
        return this.toggleFilter(x);
@@ -787,4 +785,5 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     this.unsubscribeRealTime$.next();
     this.unsubscribeRealTime$.complete();
   }
+
 }

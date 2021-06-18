@@ -3,9 +3,6 @@ import { InventoryService } from '@c8y/client';
 import { isObject} from 'util';
 import { FormControl, FormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import clonedeep from 'lodash.clonedeep';
-import { GpAssetOverviewAppIdService } from '../gp-asset-overview-app-id.service';
 import { GpAssetViewerService } from '../gp-asset-viewer.service';
 
 export interface Property {
@@ -26,7 +23,7 @@ export interface DashboardConfig {
   styleUrls: ['./gp-asset-overview-config.component.css'],
 })
 
-export class GpAssetViewerConfigComponent implements OnInit{
+export class GpAssetViewerConfigComponent implements OnInit {
 
   props = new FormControl();
   p1Props;
@@ -64,13 +61,11 @@ export class GpAssetViewerConfigComponent implements OnInit{
   constructor(
     private invSvc: InventoryService,
     private fb: FormBuilder,
-    private appIdService: GpAssetOverviewAppIdService,
     private deviceListService: GpAssetViewerService
   ) {}
 
   ngOnInit() {
-    this.appId = this.appIdService.getCurrentAppId();
-    this.appId = '12';
+    this.appId = this.deviceListService.getAppId();
     if (!this.config.configDashboard) {
       this.config.configDashboard = false;
     }
@@ -189,7 +184,6 @@ export class GpAssetViewerConfigComponent implements OnInit{
     this.busy = true;
     this.deviceListService.createBinary(this.deviceFile)
       .then((res) => {
-        console.log(res);
         if (res.data) {
           this.config.defaultImageId = res.data.id;
         }
@@ -217,12 +211,10 @@ export class GpAssetViewerConfigComponent implements OnInit{
   }
 
   commitToP1PropsConfig(props) {
-    console.log(props.data);
     this.config.p1Props = props.data;
    }
 
   commitToP2PropsConfig(props) {
-    console.log(props.data);
     this.config.p2Props = props.data;
   }
 
@@ -234,11 +226,9 @@ export class GpAssetViewerConfigComponent implements OnInit{
       withTotalPages: true
     };
     this.invSvc.childAssetsList(id, filter).then(res => {
-      console.log(res);
       res.data.forEach(mo => {
         _this.getObjectsAllProperties(mo, _this.propertiesToDisplay);
       });
-      console.log(_this.propertiesToDisplay);
     });
   }
 

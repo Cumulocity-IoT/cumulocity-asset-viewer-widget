@@ -40,15 +40,14 @@
           <span [ngClass]="realtimeState ? 'c8y-pulse active' : 'c8y-pulse inactive'"></span>
           <span>Realtime</span>
         </button>
-        <button  type="button" class="button refresh-button" (click)="refresh()"><span class="fa fa-refresh"></span></button>
+        <button  type="button" class="btn btn-link" (click)="refresh()"><span class="fa fa-refresh"></span></button>
       </div>
   
     </div>
   </div>
- <!--  <mat-divider></mat-divider> -->
-  <!-- <mat-progress-bar *ngIf="isBusy" mode="indeterminate"></mat-progress-bar> -->
    <mat-paginator *ngIf="totalRecord !== -1" class="device-list-pagination-view" [length]="totalRecord"
      [pageSizeOptions]="[5,10,20,50,100]" [pageSize]="pageSize" (page)="getPageEvent($event)"></mat-paginator>
+  <div style="text-align: center;"><c8y-loading *ngIf="isBusy"></c8y-loading></div>
   <div class="card-wrapper" *ngIf="viewMode !== '2' && !isBusy">
         <div class="book " *ngFor="let ndevice of filterData" [ngClass]="{'cover': ndevice.isBookOpen === true}">
           <div class="back"></div>
@@ -154,7 +153,7 @@
   
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-        <td mat-cell *matCellDef="let row">  <a href="#" (click)="navigateURL( row.id, row.type)">{{row.id}}</a>  </td>
+        <td mat-cell *matCellDef="let row">  <span class="asset-overview-fake-link" (click)="navigateURL( row.id, row.type)">{{row.id}}</span>  </td>
       </ng-container>
   
       <ng-container matColumnDef="name">

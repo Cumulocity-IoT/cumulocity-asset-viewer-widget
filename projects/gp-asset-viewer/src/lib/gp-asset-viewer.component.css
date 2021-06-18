@@ -302,3 +302,8 @@
      border-top-style: solid;
      border-top-color: rgba(0,0,0,.12);
    }
+   .asset-overview-fake-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+   }

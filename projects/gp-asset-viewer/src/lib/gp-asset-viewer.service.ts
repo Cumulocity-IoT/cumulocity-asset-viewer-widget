@@ -69,4 +69,17 @@ export class GpAssetViewerService {
   public downloadBinary(id): any {
     return this.inventoryBinaryService.download(id);
   }
+
+  getAppId() {
+    const currentURL = window.location.href;
+    const routeParam = currentURL.split('#');
+    if (routeParam.length > 1) {
+      const appParamArray = routeParam[1].split('/');
+      const appIndex = appParamArray.indexOf('application');
+      if (appIndex !== -1) {
+        return appParamArray[appIndex + 1];
+      }
+    }
+    return '';
+  }
 }

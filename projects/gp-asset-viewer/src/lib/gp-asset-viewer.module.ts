@@ -7,7 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { GpAssetOverviewAppIdService } from './gp-asset-overview-app-id.service';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
@@ -30,7 +29,7 @@ import {NgSelectModule} from '@ng-select/ng-select';
   exports: [GpAssetViewerComponent, GpAssetViewerConfigComponent],
   entryComponents: [GpAssetViewerComponent, GpAssetViewerConfigComponent],
   providers: [
-    GpAssetViewerService, GpAssetOverviewAppIdService,
+    GpAssetViewerService,
     {
       provide: HOOK_COMPONENTS,
       multi: true,
@@ -55,5 +54,4 @@ import {NgSelectModule} from '@ng-select/ng-select';
     }],
 })
 export class GpAssetViewerModule {
-  constructor(private appIdService: GpAssetOverviewAppIdService) { }
 }

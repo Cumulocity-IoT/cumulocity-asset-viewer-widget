@@ -153,7 +153,7 @@
           </accordion-group>
    </accordion>    
    <div class="row col-sm-12">
-     <div class="col-sm-6">
+     <div class="col-sm-3">
       <div class="btn-group device-list-switch-toggle ">
         <label class="c8y-switch ">
             <input type="checkbox" [checked]="config.realtime" 
@@ -162,12 +162,30 @@
           </label>
        </div>
      </div>
-     <div class="col-sm-6">
+     <div class="col-sm-3">
       <div class="btn-group device-list-switch-toggle ">
         <label class="c8y-switch ">
             <input type="checkbox" [checked]="config.isRuntimeExternalId" 
             [(ngModel)]="config.isRuntimeExternalId">
-            <span></span> Get Runtime External Id
+            <span></span> Include ExternalId
+          </label>
+       </div>
+     </div>
+     <div class="col-sm-3">
+      <div class="btn-group device-list-switch-toggle ">
+        <label class="c8y-switch ">
+            <input type="checkbox" [checked]="config.attentionReq" 
+            [(ngModel)]="config.attentionReq">
+            <span></span>Attentions Only(Default)
+          </label>
+       </div>
+     </div>
+     <div class="col-sm-3">
+      <div class="btn-group device-list-switch-toggle ">
+        <label class="c8y-switch ">
+            <input type="checkbox" [checked]="config.defautList" 
+            [(ngModel)]="config.defaultListView">
+            <span></span>Grid View(Default)
           </label>
        </div>
      </div>

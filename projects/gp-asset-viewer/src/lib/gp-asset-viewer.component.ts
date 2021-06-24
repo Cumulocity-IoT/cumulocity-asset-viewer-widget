@@ -79,7 +79,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.appId = this.deviceListService.getAppId();
     if (!this._config.device && isDevMode()) {
-      this.group = '129';
+      this.group = '71969134';
       this._config = {
         fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
         p1Props : [
@@ -108,6 +108,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
       ];
       this.withTabGroup = true;
+      this.onlyProblems = false;
     } else {
       this.group = this._config.device ? this._config.device.id : '';
       this.configDashboardList = this._config.dashboardList;
@@ -211,12 +212,14 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
           this.handleReatime(x.id);
         }
         this.matTableLoadAndFilter();
-        this.filterProblems();
         this.isBusy = false;
     });
+    if (this.onlyProblems) {
+      this.filterProblems();
+    }
   }
 
-  loadBoxes(x: any) {
+  async loadBoxes(x: any) {
     let alertDesc = {
       minor: 0,
       major: 0,

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injectable, } from '@angular/core';
+import { NgModule, Injectable, LOCALE_ID, } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
@@ -39,9 +39,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { GpAssetViewerModule } from 'projects/gp-asset-viewer/src/public-api';
 
 const auth = new BasicAuth({
-  user: 'darpan.lalani',
-  password: 'Manage@123',
-  tenant: 't94909947'
+  user: '',
+  password: '',
+  tenant: '##'
 });
 const client = new Client(auth, 'http://localhost:4200');
 client.setAuth(auth);
@@ -92,6 +92,7 @@ export class MockAppStateService {
     { provide: UserRoleService, useValue: client.userRole },
     { provide: IdentityService, useValue: client.identity },
     { provide: AppStateService, useClass: MockAppStateService },
+    { provide: LOCALE_ID, useValue: 'en-US' }
   ],
   entryComponents: [AppComponent]
 })

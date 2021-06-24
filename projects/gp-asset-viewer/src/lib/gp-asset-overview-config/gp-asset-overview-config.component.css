@@ -2,10 +2,6 @@
     width: 100%;
 }
 
-:host >>> .panel.asset-overview-accordian-panel .panel-title{
-  width: 100%;
-}
-
 .config-accordion {
  padding-bottom: 10px;
 }

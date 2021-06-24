@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, 
 import { InventoryService } from '@c8y/client';
 import { isObject} from 'util';
 import { FormControl, FormBuilder, Validators } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import { GpAssetViewerService } from '../gp-asset-viewer.service';
 
 export interface Property {
@@ -39,6 +39,10 @@ export class GpAssetViewerConfigComponent implements OnInit {
   dashboardList: DashboardConfig[] = [];
   deviceTypes = null;
 
+  isExpandedFP = false;
+  isExpandedP1 = false;
+  isExpandedP2 = false;
+  isExpandedDBS = false;
   @Input() config: any = {};
   displayedColumns: string[] = ['label', 'property'];
 

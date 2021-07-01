@@ -4,7 +4,7 @@
   "key": "asset-viewer-runtime-widget-application-key",
   "contentSecurityPolicy": "default-src 'self'",
   "icon": {
-    "class": "dlt-c8y-icon-list"
+    "class": "fa fa-list"
   },
   "manifest": {
     "noAppSwitcher": true

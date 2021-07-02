@@ -79,7 +79,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.appId = this.deviceListService.getAppId();
     if (!this._config.device && isDevMode()) {
-      this.group = '71969134';
+      this.group = '142';
       this._config = {
         fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
         p1Props : [
@@ -281,7 +281,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       const updatedRecord = this.filterData.find(singleDevice => singleDevice.id === updatedDeviceData.id);
       const updatedIndex = this.filterData.indexOf(updatedRecord);
       this.getAlarmAndAvailabilty(updatedDeviceData, promArr).then((res) => {
-
         res.forEach(data => {
           const inventory = data.data;
           // tslint:disable-next-line:no-unused-expression
@@ -552,106 +551,15 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     return (alarm && alarm.warning && alarm.warning > 0);
   }
 
-  async addClonedDashboard(dashboardName: string, templateId: string, icon: string,
-                           newdevicename: string, newdeviceId: string, externalId: string, tabGroup: string) {
-    const dashboardManagedObject = (await this.inventoryService.detail(templateId)).data;
-    const template = dashboardManagedObject.c8y_Dashboard;
-    await this.addTemplateDashboard(dashboardName, icon, template, newdevicename, newdeviceId, externalId, tabGroup, templateId);
-  }
-
-  async addTemplateDashboard(dashboardName: string, icon: string, template: any, newdevicename: string,
-                             newdeviceId: string, externalId: string, tabGroup: string, templateId: string) {
-    const device = {
-      name: newdevicename,
-      id: newdeviceId
-    };
-    let templateDashboad = [];
-    templateDashboad = Object.keys(template.children);
-    templateDashboad.forEach((widget) => {
-      template.children[widget].config.device = device;
-    });
-    const dashboardNameWithId = dashboardName + externalId;
-    const dashboardManagedObject = (await this.inventoryService.create({
-      c8y_Dashboard: {
-        ...template,
-        name: dashboardNameWithId,
-        icon,
-        global: true
-      }
-    })).data;
-    const newDashboardId = dashboardManagedObject.id;
-  //  await this.updateDeviceObjectForDashboard(newdeviceId, newDashboardId);
-    await this.updateDeviceObjectForDashboards(newdeviceId, newDashboardId, dashboardName, templateId, tabGroup);
-    const appServiceData = (await this.appService.detail(this.appId)).data as any;
-    appServiceData.applicationBuilder.dashboards = [
-      ...appServiceData.applicationBuilder.dashboards || [],
-      {
-        id: dashboardManagedObject.id,
-        name: dashboardNameWithId,
-        icon,
-        tabGroup: (tabGroup ? tabGroup : ''),
-        ...(newdeviceId !== '' ? { deviceId: newdeviceId } : {})
-      }
-    ];
-    this.appService.update({
-      id: appServiceData.id,
-      applicationBuilder: appServiceData.applicationBuilder
-    } as any).then (data => {
-    });
-  }
-
-  async updateApplicationDashboards(dashboardId: string, externalId: string, newdeviceId: string, dashboardName: string, tabGroup: string) {
-    const dashboardNamewithId = dashboardName + externalId;
-    const appServiceData = (await this.appService.detail(this.appId)).data as any;
-    const listOfDashboards = appServiceData.applicationBuilder.dashboards.filter((dashboard) => dashboard.id !== dashboardId);
-    listOfDashboards.push(
-      {
-        id: dashboardId,
-        name: dashboardNamewithId,
-        icon: this.dashboardIcon,
-        tabGroup: (tabGroup ? tabGroup : ''),
-        ...(newdeviceId !== '' ? { deviceId: newdeviceId } : {})
-      }
-    );
-    appServiceData.applicationBuilder.dashboards = listOfDashboards;
-    this.appService.update({
-      id: appServiceData.id,
-      applicationBuilder: appServiceData.applicationBuilder
-    } as any);
-  }
-  async updateDeviceObjectForDashboards(newdeviceId, newDashboardId, dashboardName, templateId, tabGroup) {
-    const deviceObj = (await this.inventoryService.detail(newdeviceId)).data as any;
-    let deviceListDynamicDashboards = deviceObj.deviceListDynamicDashboards || [];
-    if (deviceListDynamicDashboards.length > 0) {
-      deviceListDynamicDashboards = deviceListDynamicDashboards.filter((dashboard) => dashboard.appId !== this.appId ||
-        dashboard.deviceGroupId !== this.group );
-    }
-    deviceListDynamicDashboards.push({
-      appId: this.appId,
-      deviceGroupId: this.group,
-      templateId,
-      dashboardId: newDashboardId,
-      dashboardName,
-      tabGroup: (tabGroup ? tabGroup || '' : '')
-    });
-    deviceObj.deviceListDynamicDashboards = [...deviceListDynamicDashboards];
-    this.inventoryService.update({
-      ...deviceObj
-    }).then((res) => {
-      this.updateDeviceList(res, newdeviceId);
-    });
-  }
   async updateDeviceObjectForExternalId(newdeviceId, externalData) {
     const deviceObj = (await this.inventoryService.detail(newdeviceId)).data as any;
-    this.inventoryService.update({
+    await this.inventoryService.update({
       deviceExternalDetails: {
         externalId: externalData.externalId,
         externalType: externalData.type,
       },
       ...deviceObj
-    }).then((res) => {
-      this.updateDeviceList(res, newdeviceId);
-    });
+    })
   }
 
   private updateDeviceList(res, newdeviceId) {

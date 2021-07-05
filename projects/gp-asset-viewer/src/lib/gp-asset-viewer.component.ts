@@ -447,7 +447,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     if (deviceType && this.appId) {
       const dashboardObj = this.configDashboardList.find((dashboard) => dashboard.type === deviceType);
       if (dashboardObj && dashboardObj.templateID) {
-        if (dashboardObj.tabGroup) {
+        if (dashboardObj.withTabGroup) {
           this.router.navigate([
             `/application/${this.appId}/tabgroup/${deviceId}/dashboard/${dashboardObj.templateID}/device/${deviceId}`]);
         } else if (dashboardObj.tabGroupID) {
@@ -559,7 +559,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         externalType: externalData.type,
       },
       ...deviceObj
-    })
+    });
   }
 
   private updateDeviceList(res, newdeviceId) {

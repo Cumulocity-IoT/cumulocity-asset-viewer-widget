@@ -86,9 +86,6 @@ export class GpAssetViewerConfigComponent implements OnInit {
     if (!this.config.device) {
         this.config.device = {};
       }
-    if (this.config.withTabGroup === undefined) {
-        this.config.withTabGroup = false;
-      }
     this.propertiesToDisplay = [
         {id: 'id', label: 'ID', value: 'id'},
         {id: 'name', label: 'Name', value: 'name'},
@@ -178,6 +175,9 @@ export class GpAssetViewerConfigComponent implements OnInit {
       }
     if (this.config.isRuntimeExternalId === undefined) {
         this.config.isRuntimeExternalId =  false;
+    }
+    if (this.config.showChildDevices === undefined) {
+      this.config.showChildDevices =  false;
     }
   }
 

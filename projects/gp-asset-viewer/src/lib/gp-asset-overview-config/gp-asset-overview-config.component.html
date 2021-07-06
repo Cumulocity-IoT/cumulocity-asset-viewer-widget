@@ -153,7 +153,7 @@
           </div>
         </div>
    <div class="row col-sm-12">
-     <div class="col-sm-3">
+     <div class="col-sm-4">
       <div class="btn-group device-list-switch-toggle ">
         <label class="c8y-switch ">
             <input type="checkbox" [checked]="config.realtime" 
@@ -162,7 +162,7 @@
           </label>
        </div>
      </div>
-     <div class="col-sm-3">
+     <div class="col-sm-4">
       <div class="btn-group device-list-switch-toggle ">
         <label class="c8y-switch ">
             <input type="checkbox" [checked]="config.isRuntimeExternalId" 
@@ -171,7 +171,19 @@
           </label>
        </div>
      </div>
-     <div class="col-sm-3">
+     <div class="col-sm-4">
+      <div class="btn-group device-list-switch-toggle ">
+        <label class="c8y-switch ">
+            <input type="checkbox" [checked]="config.showChildDevices" 
+            [(ngModel)]="config.showChildDevices">
+            <span></span> Only Child Devices
+          </label>
+       </div>
+     </div>
+     
+   </div>
+   <div class="row col-sm-12">
+    <div class="col-sm-4">
       <div class="btn-group device-list-switch-toggle ">
         <label class="c8y-switch ">
             <input type="checkbox" [checked]="config.attentionReq" 
@@ -180,7 +192,7 @@
           </label>
        </div>
      </div>
-     <div class="col-sm-3">
+     <div class="col-sm-4">
       <div class="btn-group device-list-switch-toggle ">
         <label class="c8y-switch ">
             <input type="checkbox" [checked]="config.defautList" 

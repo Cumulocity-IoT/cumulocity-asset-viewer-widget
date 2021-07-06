@@ -50,6 +50,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   isBusy = false;
   realtimeState = true;
   isRuntimeExternalId = false;
+  showChildDevices = false;
   displayedColumns: string[] = ['id', 'name', 'externalId', 'lastUpdated'];
   dataSource = new  MatTableDataSource<DeviceData>([]);
   matData = [];
@@ -77,9 +78,10 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     }
 
   async ngOnInit() {
+    this.isBusy = true;
     this.appId = this.deviceListService.getAppId();
     if (!this._config.device && isDevMode()) {
-      this.group = '142';
+      this.group = '1725';
       this._config = {
         fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
         p1Props : [
@@ -109,6 +111,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       ];
       this.withTabGroup = true;
       this.onlyProblems = false;
+      this.showChildDevices = true;
     } else {
       this.group = this._config.device ? this._config.device.id : '';
       this.configDashboardList = this._config.dashboardList;
@@ -119,6 +122,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.pageSize = this._config.pageSize ? this._config.pageSize : this.pageSize;
       this.viewMode = this._config.defaultListView ?  '2' : '1';
       this.onlyProblems = this._config.attentionReq ? true : false;
+      this.showChildDevices = this._config.showChildDevices ? true : false;
     }
     this.otherProp = this._config.otherProp ? this._config.otherProp : '';
     this.displayedColumns = this.displayedColumns.concat(this._config.fpProps ? this._config.fpProps : []);
@@ -192,13 +196,14 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     this.isBusy = true;
 
     // Get list of devices for given group
-    const response = await this.deviceListService.getDeviceList(this.group, this.pageSize, this.currentPage);
+    const response = await this.deviceListService.getDeviceList(this.group, this.pageSize, this.currentPage, this.showChildDevices);
     if (response.data && response.data.length < this.pageSize) {
        this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
      } else {
        this.totalRecord = this.pageSize * response.paging.totalPages;
      }
-    await this.asyncForEach(response.data, async (x) => {
+    if (response.data && response.data.length > 0) {
+      await this.asyncForEach(response.data, async (x) => {
         await this.loadBoxes(x);
         await this.loadMatData(x);
         let externalData;
@@ -211,11 +216,14 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         if (this.realtimeState) {
           this.handleReatime(x.id);
         }
-        this.matTableLoadAndFilter();
-        this.isBusy = false;
-    });
-    if (this.onlyProblems) {
-      this.filterProblems();
+      });
+    //  this.matTableLoadAndFilter();
+      this.isBusy = false;
+      if (this.onlyProblems) {
+        this.filterProblems();
+      }
+    } else {
+      this.isBusy = false;
     }
   }
 
@@ -348,6 +356,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         }
     });
       this.matData.push(deviceData);
+      this.matTableLoadAndFilter();
    });
   }
 
@@ -406,8 +415,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   matFilterConditions(x: any, filterValue) {
      return !filterValue || x.id.includes(filterValue) ||
       x.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-      (x.externalId.toLowerCase().includes(filterValue.toLowerCase())) ||
-      (x.availability.toLowerCase().includes(filterValue.toLowerCase())) ||
+      (x.externalId && x.externalId.toLowerCase().includes(filterValue.toLowerCase())) ||
+      (x.availability && x.availability.toLowerCase().includes(filterValue.toLowerCase())) ||
       (x.firmwareStatus && x.firmwareStatus.toLowerCase().includes(filterValue.toLowerCase())) ||
       (x.alertDetails && this.isAlerts(x.alertDetails) && (
         this.isAlertCritical(x.alertDetails) && 'critical'.includes(filterValue.toLowerCase()) ||

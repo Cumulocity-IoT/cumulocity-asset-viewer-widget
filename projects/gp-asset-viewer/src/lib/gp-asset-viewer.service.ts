@@ -7,7 +7,7 @@ export class GpAssetViewerService {
   devicesAll: any;
   constructor(private inventoryService: InventoryService, private inventoryBinaryService: InventoryBinaryService) { }
 
-  async getDeviceList(DeviceGroup, pageSize, currentPage) {
+  async getDeviceList(DeviceGroup: any, pageSize: any, currentPage: any, onlyChildDevice: boolean) {
 
     let response: any = null;
     const filter: object = {
@@ -15,8 +15,11 @@ export class GpAssetViewerService {
       withTotalPages: true,
       currentPage
     };
-    response = (await this.inventoryService.childAssetsList(DeviceGroup, filter));
-
+    if (onlyChildDevice) {
+      response = (await this.inventoryService.childDevicesList(DeviceGroup, filter));
+    } else {
+      response = (await this.inventoryService.childAssetsList(DeviceGroup, filter));
+    }
   // Check that the response is a Group and not a device
     if (response.hasOwnProperty('c8y_IsDevice')) {
       alert('Please select a group for this widget to fuction correctly');

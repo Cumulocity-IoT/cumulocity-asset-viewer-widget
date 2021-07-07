@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2020 Software AG, Darmstadt, Germany and/or its licensors
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, OnDestroy, isDevMode } from '@angular/core';
 import { InventoryService } from '@c8y/client';
 import { isObject} from 'util';
@@ -68,6 +86,9 @@ export class GpAssetViewerConfigComponent implements OnInit {
     private deviceListService: GpAssetViewerService
   ) {}
 
+  /**
+   * Initialize default configration and get all device type
+   */
   ngOnInit() {
     this.appId = this.deviceListService.getAppId();
     if (!this.config.configDashboard) {
@@ -181,6 +202,9 @@ export class GpAssetViewerConfigComponent implements OnInit {
     }
   }
 
+  /**
+   * Load Default Image file from Input
+   */
   LoadDefaultFile(files) {
     this.deviceFile = files.files[0];
   }
@@ -222,6 +246,9 @@ export class GpAssetViewerConfigComponent implements OnInit {
     this.config.p2Props = props.data;
   }
 
+  /**
+   * Get Device Properties
+   */
   getDeviceProperties(id: any) {
     // tslint:disable-next-line:variable-name
     const _this = this;
@@ -256,6 +283,9 @@ export class GpAssetViewerConfigComponent implements OnInit {
     });
   }
 
+  /**
+   * Fetch Device Manage objects/fragment based on key/childkey
+   */
   fetchObjects(objectSubProperty, key, propertyTypes): void {
     // tslint:disable-next-line:variable-name
     const _this = this;
@@ -275,6 +305,9 @@ export class GpAssetViewerConfigComponent implements OnInit {
     });
   }
 
+  /**
+   * Get All devices's device type
+   */
   private getAllDevices() {
     const deviceList: any = null;
     this.deviceListService.getAllDevices(1, deviceList)
@@ -286,6 +319,10 @@ export class GpAssetViewerConfigComponent implements OnInit {
         if (isDevMode()) { console.log('+-+- ERROR while getting ALL devices ', err); }
       });
   }
+
+  /**
+   * Add new Row for Dashbaord Settings
+   */
   addNewRecord(currentIndex) {
     if ((currentIndex + 1) === this.config.dashboardList.length) {
       const dashboardObj: DashboardConfig = {};

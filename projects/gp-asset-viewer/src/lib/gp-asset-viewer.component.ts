@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2020 Software AG, Darmstadt, Germany and/or its licensors
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { Component, Input, isDevMode, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -31,7 +48,7 @@ export interface DeviceData {
 })
 export class GpAssetViewerComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:variable-name
-  _config: any = {}; // {} needs to be removed
+  _config: any = {};
   otherProp: any;
   tableProps: any;
   @Input()
@@ -40,7 +57,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
   deviceListData = [];
   isBookOpen = false;
-  dashboardIcon = 'th';
   appId = '' ;
   group = '';
   configDashboardList = [];
@@ -61,7 +77,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   totalRecord = -1;
   onlyProblems = false;
   latestFirmwareVersion = 0;
-  showDashboardConfig = false;
   unsubscribeRealTime$ = new Subject<void>();
   bsModalRef: BsModalRef;
   viewMode = '1';
@@ -81,9 +96,10 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     this.isBusy = true;
     this.appId = this.deviceListService.getAppId();
     if (!this._config.device && isDevMode()) {
-      this.group = '1725';
+      this.group = '###';
       this._config = {
-        fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
+        // Sample Configuration Data
+        /* fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
         p1Props : [
                   {id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable'},
                   {id: 'id', label: 'id', value: 'id'},
@@ -101,14 +117,9 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         otherProp: {
           label: 'Firmware:',
           value: 'id'
-        }
+        } */
       };
-      this.configDashboardList = [
-       // { type: 'Test_Camera', templateID: '2313611', tabGroup: 'DemoTab', dashboardName: 'type1/'},
-       // { type: 'Test_Beacon', templateID: '2313612', tabGroup: 'DemoGroup2', dashboardName: 'type2_demo1/'},
-       //  { type: 'All', templateID: '2313615',  dashboardName: 'type2_demo1/' }
-
-      ];
+      this.configDashboardList = [];
       this.withTabGroup = true;
       this.onlyProblems = false;
       this.showChildDevices = true;
@@ -128,9 +139,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     this.displayedColumns = this.displayedColumns.concat(this._config.fpProps ? this._config.fpProps : []);
     await this.getFirmwareData();
     this.loadDefaultImage();
-    if (this._config.configDashboard && this.appId && this.hasAdminRole()) {
-      this.showDashboardConfig = true;
-    }
   }
 
   loadDefaultImage() {
@@ -176,6 +184,9 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * This method will called during page navigation
+   */
   getPageEvent(pageEvent) {
     this.pageSize = pageEvent.pageSize;
     this.currentPage = pageEvent.pageIndex + 1;
@@ -227,6 +238,9 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Load Book views
+   */
   async loadBoxes(x: any) {
     let alertDesc = {
       minor: 0,
@@ -259,12 +273,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
    });
   }
 
-  // Check if current user is has adming access
-  hasAdminRole() {
-    return (this.userService.hasAllRoles(this.appStateService.currentUser.value,
-       ['ROLE_INVENTORY_ADMIN', 'ROLE_APPLICATION_MANAGEMENT_ADMIN']));
-  }
-
   handleReatime(id) {
      this.inventoryService.detail$(id, {
           hot: true,
@@ -276,6 +284,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
             this.manageRealtime(data[0]);
     });
   }
+
   manageRealtime(updatedDeviceData) {
     let alertDesc = {
       minor: 0,
@@ -426,6 +435,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       )
       );
   }
+
   // Realtime toggle
   toggle() {
     this.realtimeState = !this.realtimeState;
@@ -451,7 +461,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64,' + ImageData.defaultImage);
   }
 
-  // Navigate URL to dashboard if dashboard is exist else it will redirect to dialog box to create new Dasboard
+  // Navigate URL to dashboard if dashboard is exist
   navigateURL(deviceId: string, deviceType: string) {
     if (deviceType && this.appId) {
       const dashboardObj = this.configDashboardList.find((dashboard) => dashboard.type === deviceType);
@@ -485,11 +495,11 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       }
       if (alarm.warning && alarm.warning > 0) {
         alarmsStatus = alarmsStatus + `Warning: ${alarm.warning} `;
+      }
     }
-  }
-
     return alarmsStatus;
   }
+
   isAlerts(alarm) {
     if (alarm ===  undefined) {return false; }
 
@@ -497,6 +507,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       || (alarm.minor && alarm.minor > 0)
       || (alarm.warning && alarm.warning > 0);
   }
+
   isAlertsColor(alarm) {
     if (alarm) {
       if (alarm.critical && alarm.critical > 0) {
@@ -513,6 +524,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     }
     return '';
   }
+
   isAlertsBGColor(alarm) {
     if (alarm) {
       if (alarm.critical && alarm.critical > 0) {
@@ -529,6 +541,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     }
     return '';
   }
+
   getTotalAlerts(alarm) {
     let alertCount = 0;
     if (alarm) {
@@ -569,13 +582,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       },
       ...deviceObj
     });
-  }
-
-  private updateDeviceList(res, newdeviceId) {
-    const ele = this.filterData.find(x => x.id === newdeviceId);
-    ele.deviceExternalDetails = res.data.deviceExternalDetails;
-    this.filterData = this.filterData.filter(x => x.id !== newdeviceId);
-    this.filterData.push(ele);
   }
 
   applyFilter() {
@@ -644,6 +650,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
    // applied when Attention Required toggle is trigger
   matToggleFilter(x: any) {
     return (this.checkPropForFilter('availability') && x.availability && x.availability.toLowerCase().includes('unavailable')) ||
@@ -667,8 +674,6 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     deviceObj.deviceListDynamicDashboards = [...deviceListDynamicDashboards];
     this.inventoryService.update({
       ...deviceObj
-    }).then((res) => {
-      //    this.updateDeviceList(res, newdeviceId);
     });
   }
 
@@ -677,6 +682,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     versionIssues = version - this.latestFirmwareVersion;
     return versionIssues;
   }
+
   getFirmwareRisk(version) {
     const versionIssue = this.calculateFirmwareRisk(version);
     if (versionIssue === -1) {

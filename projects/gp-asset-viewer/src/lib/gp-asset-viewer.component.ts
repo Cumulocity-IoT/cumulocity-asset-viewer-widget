@@ -194,6 +194,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     this.matData = [];
     this.deviceListData = [];
     this.filterData = [];
+    this.dataSource.data = this.matData;
     this.getDevices();
   }
 

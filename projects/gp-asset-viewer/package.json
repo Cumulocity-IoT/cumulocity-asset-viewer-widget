@@ -1,6 +1,9 @@
 {
   "name": "gp-asset-viewer",
-  "version": "1.0.3",
+  "version": "1.0.4",
+  "description": "The Asset Viewer Widget help you to display asset/device data in Tile/List view, along with navigation to template dashboards(App Builder only).",
+  "author": "Darpankumar Lalani - Software AG, Global Presales",
+  "license": "Apache 2.0",
   "peerDependencies": {
     "@angular/common": "^8.2.0",
     "@angular/core": "^8.2.0"

@@ -45,10 +45,10 @@
   
     </div>
   </div>
+  <mat-paginator [style.visibility]="totalRecord === -1? 'hidden': 'visible'" class="device-list-pagination-view" [length]="totalRecord"
+  [pageSizeOptions]="[5,10,20,50,100]" [pageSize]="pageSize" (page)="getPageEvent($event)"></mat-paginator>
   <div style="text-align: center;"><c8y-loading *ngIf="isBusy"></c8y-loading></div>
   <div *ngIf="!isBusy && totalRecord > 0 ; else noRecordFound"> 
-   <mat-paginator *ngIf="totalRecord !== -1" class="device-list-pagination-view" [length]="totalRecord"
-     [pageSizeOptions]="[5,10,20,50,100]" [pageSize]="pageSize" (page)="getPageEvent($event)"></mat-paginator>
     <div class="card-wrapper" *ngIf="viewMode !== '2' && !isBusy">
         <div class="book " *ngFor="let ndevice of filterData" [ngClass]="{'cover': ndevice.isBookOpen === true}">
           <div class="back"></div>

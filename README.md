@@ -1,7 +1,7 @@
 
-  # Cumulocity Asset Viewer Widget[<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/cumulocity-tracking-replay-map-widget/releases/download/1.0.2/tracking-replay-runtime-widget-1.0.2.zip)
+  # Cumulocity Asset Viewer Widget[<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.4/asset-viewer-runtime-widget-1.0.4.zip)
   
-The Cumulocity Asset Viewer Widget help you to display asset/device data in Tile/Grid view, along with navigation to template dashboards(App Builder only). This widget also supports various features such as display child devices/assets, configuration of fields/columns, search, only assets where attentions required, server side pagination, etc.
+The Cumulocity Asset Viewer Widget help you to display assets/devices data in Tile/Grid view, along with navigation to template dashboards(App Builder only). This widget also supports various features such as display child devices/assets, configuration of fields/columns, search, display only assets/devices where attentions required, server side pagination, etc.
 
 ![Asset Viewer Image](https://user-images.githubusercontent.com/32765455/128975492-4fa026c0-5fef-473c-a123-847582e6a4c6.png)
 
@@ -12,7 +12,7 @@ The Cumulocity Asset Viewer Widget help you to display asset/device data in Tile
 
 *  **Pagination:** Configurable Paginations and also option to set default page size.
 
-*  **Configurable columns** User can choose what to display in each page of tiles from available list and also option to display custom field.
+*  **Configurable Columns:** User can choose what to display in each page of tiles from available list and also option to display custom field.
 
 *  **Dashboard Settings (App Builder only):** Ability to navigate to dashboard by providing dashboard Id.
 
@@ -27,10 +27,10 @@ The Cumulocity Asset Viewer Widget help you to display asset/device data in Tile
   
 ### Runtime Widget Deployment?
 
-* This widget support runtime deployment. Download [Runtime Binary](https://github.com/SoftwareAG/cumulocity-tracking-replay-map-widget/releases/download/1.0.2/tracking-replay-runtime-widget-1.0.2.zip)  and follow runtime deployment instructions from [here](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
+* This widget support runtime deployment. Download [Runtime Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.4/asset-viewer-runtime-widget-1.0.4.zip)  and follow runtime deployment instructions from [here](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
   
 
-### Installation of widget through Appbuilder or Cockipt Deployment?
+### Installation of widget through App Builder or Cockipt Deployment?
   
 
 **Supported Cumulocity Environments:**
@@ -73,7 +73,7 @@ The Cumulocity Asset Viewer Widget help you to display asset/device data in Tile
     npm i @angular/material@8.2.3 @ng-select/ng-select@3.7.3
 
     ```
-2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-tracking-replay-map-widget/releases/download/1.0.2/gp-tracking-replay-map-1.0.2.tgz)**.
+2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.4/gp-asset-viewer-1.0.4.tgz)**.
 
 
 3. Install the Binary file in app builder.
@@ -140,7 +140,7 @@ The Cumulocity Asset Viewer Widget help you to display asset/device data in Tile
 
     ```
 
-2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-tracking-replay-map-widget/releases/download/1.0.2/gp-tracking-replay-map-1.0.2.tgz)**
+2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.4/gp-asset-viewer-1.0.4.tgz)**
 
 3. Install the Binary file in your project.
 
@@ -250,7 +250,7 @@ The Cumulocity Asset Viewer Widget help you to display asset/device data in Tile
 
     ```
 
-    npm run start
+    ng serve
 
     ```
 
@@ -258,17 +258,11 @@ The Cumulocity Asset Viewer Widget help you to display asset/device data in Tile
 
     ```
 
-    npm run build
+    npm run buildPatch
 
     ```
 
-7. Deploy the app:
-
-    ```
-
-    npm run deploy
-
-    ```
+7. Deploy the app: Follow the [Installation instructions](#Installation)
 
 ## QuickStart
   
@@ -308,31 +302,31 @@ Congratulations! Asset Viewer widget is configured.
  
 
 *  **Target assets or devices:** User can select a device/asset or device/asset group. If group is selected, list of devices/assets will be display. If single device/asset selected and enable "Only Child Devices" options then all child devices/assets will be displayed. 
-*  **Front Page Settings:** User can select up to 3 fields to display in front page of tile. If user selected "Other" as one of the field then any custom field can be provided.
-*  **Page1 Settings:** User can select up to 5 fields to display in Page1  of tile. If user selected "Other" as one of the field then any custom field can be provided.
-*  **Page2 Settings:** User can select up to 5 fields to display in Page2  of tile. If user selected "Other" as one of the field then any custom field can be provided.
-*  **Dashboard Settings(Application Builder Only):** This feature is available only in application builder. User can navigate to any other dashboard by providing below details
-    * **Device Type:** Select a device type. Navigation will be applied to all devices of this device type to a specific dashboard
-    * **Dashboard ID:** Dashboard ID of a dashboard where user need to navigate. You can find dashboard id in browser URL
+*  **Front Page Settings:** User can select up to 3 fields to display in front page of tile. If user selected "Other" as one of the field then one custom field can be configured for display.
+*  **Page1 Settings:** User can select up to 5 fields to display in Page1  of tile. If user selected "Other" as one of the field then one custom field can be configured for display.
+*  **Page2 Settings:** User can select up to 5 fields to display in Page2  of tile. If user selected "Other" as one of the field then one custom field can be configured for display.
+*  **Dashboard Settings(Application Builder Only):** This feature is available only in application builder. User can navigate to any other dashboard by providing below details:
+    * **Device Type:** Select a device type. Navigation will be applied to all devices/assets of this device/asset type to a specific dashboard.
+    * **Dashboard ID:** Dashboard ID of a dashboard where user need to navigate. You can find dashboard id in browser URL.
     * **DeviceId as TabGroup:** Select this option only if you are using Group Template as dashboard in application builder and selected deviceId as tabgroup field during group template configuration.
-    * **TabGroup ID(optional):** If your dashboard is based on tabgroup then provide tabgroup
+    * **TabGroup ID(optional):** If your dashboard is based on tabgroup then provide tabgroup id.
 
-* **Realtime:** Activate Realtime by default
+* **Realtime:** Activate Realtime by default.
 * **Include ExternalId:** Widget will call identity service for each asset/device to get external Id. Select only if needed. Not recommended for large set of devices.
-* **Only Child Devices:** Display child devices/assets for selected device/assets
+* **Only Child Devices:** Display child devices/assets for selected device/assets.
 * **Attentions Only(default):** Display only devices/assets where attentions required or have problems for example, critical/major alerts.
-* **Grid View(default):** Display Grid view instead of tile view by default.
-* **Default Page Size:** Select Records per page
+* **Grid View(default):** Display grid view instead of tile view by default.
+* **Default Page Size:** Select records per page.
 * **Upload Default Image:** Upload default image to display in all assets/devices. Please click on upload file after selecting image.
 
 **Asset Viewer On Screen Options:**
 
 *  **Toggle View Mode**: Switch between tile or grid view.
-*  **Attention Required**: Activate this to filter devices/assets where attentions required.
+*  **Attention Required**: Activate this to display devices/assets where attentions is required.
 *  **Search**: Smart Search filter. User can search by device/asset name, external id, device id, alert type, etc.
-*  **Realtime** : On/Off Realtime option
+*  **Realtime** : On/Off Realtime option.
 *  **Refresh**: Useful for force reload/refresh devices.
-*  **Pagination**: Page navigation options
+*  **Pagination**: Page navigation options.
 
  
   

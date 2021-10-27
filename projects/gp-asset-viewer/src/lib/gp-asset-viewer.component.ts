@@ -57,7 +57,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
   deviceListData = [];
   isBookOpen = false;
-  appId = '' ;
+  appId = '';
   group = '';
   configDashboardList = [];
   withTabGroup = false;
@@ -68,7 +68,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   isRuntimeExternalId = false;
   showChildDevices = false;
   displayedColumns: string[] = ['id', 'name', 'externalId', 'lastUpdated'];
-  dataSource = new  MatTableDataSource<DeviceData>([]);
+  dataSource = new MatTableDataSource<DeviceData>([]);
   matData = [];
   defaultImageId = null;
   defaultImageURL = null;
@@ -99,39 +99,39 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.group = '###';
       this._config = {
         // Sample Configuration Data
-        /* fpProps : ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
-        p1Props : [
-                  {id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable'},
-                  {id: 'id', label: 'id', value: 'id'},
-                  {id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName'},
-                  {id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name'},
-                  {id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status'}
-                ],
-        p2Props : [
-                  {id: 'owner', label: 'owner', value: 'owner'},
-                  {id: 'creationTime', label: 'creationTime', value: 'creationTime'},
-                  {id: 'type', label: 'type', value: 'type'},
-                  {id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated'},
-                  {id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType'}
-                ],
-        otherProp: {
-          label: 'Firmware:',
-          value: 'id'
-        } */
+        // fpProps: ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
+        // p1Props: [
+        //   { id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable' },
+        //   { id: 'id', label: 'id', value: 'id' },
+        //   { id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName' },
+        //   { id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name' },
+        //   { id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status' }
+        //         ],
+        // p2Props: [
+        //   { id: 'owner', label: 'owner', value: 'owner' },
+        //   { id: 'creationTime', label: 'creationTime', value: 'creationTime' },
+        //   { id: 'type', label: 'type', value: 'type' },
+        //   { id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated' },
+        //   { id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType' }
+        //         ],
+        // otherProp: {
+        //   label: 'Firmware:',
+        //   value: 'id'
+        // }
       };
       this.configDashboardList = [];
       this.withTabGroup = true;
       this.onlyProblems = false;
-      this.showChildDevices = true;
+      this.showChildDevices = false;
     } else {
       this.group = this._config.device ? this._config.device.id : '';
       this.configDashboardList = this._config.dashboardList;
-      this.realtimeState =  this._config.realtime ? this._config.realtime : '';
+      this.realtimeState = this._config.realtime ? this._config.realtime : '';
       this.withTabGroup = this._config.withTabGroup ? this._config.withTabGroup : false;
       this.isRuntimeExternalId = this._config.isRuntimeExternalId ? this._config.isRuntimeExternalId : false;
       this.defaultImageId = this._config.defaultImageId ? this._config.defaultImageId : null;
       this.pageSize = this._config.pageSize ? this._config.pageSize : this.pageSize;
-      this.viewMode = this._config.defaultListView ?  '2' : '1';
+      this.viewMode = this._config.defaultListView ? '2' : '1';
       this.onlyProblems = this._config.attentionReq ? true : false;
       this.showChildDevices = this._config.showChildDevices ? true : false;
     }
@@ -251,7 +251,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     };
     const promArr = new Array();
     let availability = x.c8y_Availability ? x.c8y_Availability.status : undefined;
-    alertDesc = this.checkAlarm(x, alertDesc);
+    alertDesc = (x.hasOwnProperty('c8y_IsAsset')) ?  await this.deviceListService.getAlarmsForAsset(x) : this.checkAlarm(x, alertDesc);
     this.getAlarmAndAvailabilty(x, promArr).then((res) => {
       x.childDeviceAvailable = [];
       res.forEach(data => {
@@ -315,7 +315,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         updatedDeviceData.alertDetails = alertDesc;
       });
       this.filterData[updatedIndex] = updatedDeviceData;
-      this.matData = [...this.matData.filter( device => device.id !== updatedDeviceData.id)];
+      this.matData = [...this.matData.filter(device => device.id !== updatedDeviceData.id)];
       this.loadMatData(updatedDeviceData);
       this.dataSource.data = this.matData;
       this.dataSource.sort = this.sort;
@@ -331,9 +331,10 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       critical: 0,
       warning: 0
     };
+
     const promArr = new Array();
     let availability = x.c8y_Availability ? x.c8y_Availability.status : undefined;
-    alertDesc = this.checkAlarm(x, alertDesc);
+    alertDesc = (x.hasOwnProperty('c8y_IsAsset')) ?  await this.deviceListService.getAlarmsForAsset(x) : this.checkAlarm(x, alertDesc);
     this.getAlarmAndAvailabilty(x, promArr).then((res) => {
       const deviceData: DeviceData = {};
       res.forEach(data => {
@@ -618,7 +619,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       });
       this.filterValue = this.filterValue;
       this.dataSource.data = this.matData.filter(x => this.matToggleFilter(x));
-      if (this.matTable) {  this.matTable.renderRows(); }
+      if (this.matTable) { this.matTable.renderRows(); }
     } else {
       this.dataSource.data = this.matData;
       if (this.matTable) { this.matTable.renderRows(); }
@@ -631,7 +632,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   toggleFilter(x: any) {
     return (this.checkPropForFilter('availability') && x.availability && x.availability.toLowerCase().includes('unavailable')) ||
       (this.checkPropForFilter('availability') && x.availability && x.availability.toLowerCase().includes('partial')) ||
-      (this.checkPropForFilter('firmwarestatus') &&  x.c8y_Firmware && x.c8y_Firmware.version &&
+      (this.checkPropForFilter('firmwarestatus') && x.c8y_Firmware && x.c8y_Firmware.version &&
         (this.getFirmwareRiskForFilter(x.c8y_Firmware.version).toLowerCase().includes('low') ||
           this.getFirmwareRiskForFilter(x.c8y_Firmware.version).toLowerCase().includes('medium') ||
           this.getFirmwareRiskForFilter(x.c8y_Firmware.version).toLowerCase().includes('high')

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, OnDestroy, isDevMode } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges, OnDestroy, isDevMode, DoCheck } from '@angular/core';
 import { InventoryService } from '@c8y/client';
 import { isObject} from 'util';
 import { FormControl, FormBuilder, Validators } from '@angular/forms';
@@ -41,7 +41,7 @@ export interface DashboardConfig {
   styleUrls: ['./gp-asset-overview-config.component.css'],
 })
 
-export class GpAssetViewerConfigComponent implements OnInit {
+export class GpAssetViewerConfigComponent implements OnInit, DoCheck {
 
   props = new FormControl();
   p1Props;
@@ -61,6 +61,7 @@ export class GpAssetViewerConfigComponent implements OnInit {
   isExpandedP1 = false;
   isExpandedP2 = false;
   isExpandedDBS = false;
+  configDevice = '';
   @Input() config: any = {};
   displayedColumns: string[] = ['label', 'property'];
 
@@ -91,6 +92,7 @@ export class GpAssetViewerConfigComponent implements OnInit {
    */
   ngOnInit() {
     this.appId = this.deviceListService.getAppId();
+   // this.appId = '57697';
     if (!this.config.configDashboard) {
       this.config.configDashboard = false;
     }
@@ -103,10 +105,16 @@ export class GpAssetViewerConfigComponent implements OnInit {
       this.dashboardList.push(dashboardObj);
       this.config.dashboardList = this.dashboardList;
     }
-    this.getAllDevices();
     if (!this.config.device) {
         this.config.device = {};
       }
+    else {
+      this.configDevice = this.config.device.id;
+      if(this.appId) {
+        this.getAllDevices(this.configDevice);
+      }
+    }
+   // this.config.device.id = '5821544';  
     this.propertiesToDisplay = [
         {id: 'id', label: 'ID', value: 'id'},
         {id: 'name', label: 'Name', value: 'name'},
@@ -202,6 +210,12 @@ export class GpAssetViewerConfigComponent implements OnInit {
     }
   }
 
+  ngDoCheck(): void {
+    if (this.config.device && this.config.device.id  && this.config.device.id !== this.configDevice) {
+      this.configDevice = this.config.device.id;
+      this.getAllDevices(this.configDevice);
+    }
+  }
   /**
    * Load Default Image file from Input
    */
@@ -308,9 +322,9 @@ export class GpAssetViewerConfigComponent implements OnInit {
   /**
    * Get All devices's device type
    */
-  private getAllDevices() {
+  private getAllDevices(deviceId: string) {
     const deviceList: any = null;
-    this.deviceListService.getAllDevices(1, deviceList)
+    this.deviceListService.getChildDevices(deviceId,1,deviceList)
       .then((deviceFound) => {
         this.deviceTypes = Array.from(new Set(deviceFound.data.map(item => item.type)));
         this.deviceTypes = this.deviceTypes.filter(n => n);

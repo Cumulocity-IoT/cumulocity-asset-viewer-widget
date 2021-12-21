@@ -23,7 +23,7 @@ import { GpAssetViewerService } from './gp-asset-viewer.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+// import { MatSortModule } from '@angular/material/sort';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
@@ -37,7 +37,7 @@ import {NgSelectModule} from '@ng-select/ng-select';
     ReactiveFormsModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule,
+    // MatSortModule,
     TypeaheadModule.forRoot(),
     ModalModule.forRoot(),
     AccordionModule.forRoot(),

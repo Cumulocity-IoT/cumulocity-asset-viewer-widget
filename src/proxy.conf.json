@@ -1,6 +1,6 @@
 {
     "/": {
-    "target": "<Your Tenant URL>",
+    "target": "https://sandbox-ar.eu-latest.cumulocity.com/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "info"

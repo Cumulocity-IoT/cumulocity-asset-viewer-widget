@@ -150,7 +150,7 @@
         </div>
   </div>
   <div *ngIf="viewMode === '2' && !isBusy">
-    <table  mat-table [dataSource]="dataSource" matSort class="device-list-table">
+    <table  mat-table  [dataSource]="dataSource" matSort class="device-list-table">
   
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>

@@ -46,6 +46,7 @@ export interface DeviceData {
   styleUrls: ['gp-asset-viewer.component.css'],
   // encapsulation: ViewEncapsulation.None
 })
+
 export class GpAssetViewerComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:variable-name
   _config: any = {};
@@ -84,6 +85,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   set sort(v: MatSort) { this.dataSource.sort = v; }
   @ViewChild(MatTable, { static: false }) matTable: MatTable<any>;
   detailSubs;
+  
   constructor(private inventoryService: InventoryService,
     public inventory: InventoryService,
     private realTimeService: Realtime,

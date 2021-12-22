@@ -56,9 +56,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { GpAssetViewerModule } from 'projects/gp-asset-viewer/src/public-api';
 
 const auth = new BasicAuth({
-  user: '###',
-  password: '###',
-  tenant: '###'
+  user: '',
+  password: '',
+  tenant: ''
 });
 const client = new Client(auth, 'http://localhost:4200');
 client.setAuth(auth);

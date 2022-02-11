@@ -1,8 +1,8 @@
 <div class="gp-device-list header-container">
     <div class="header-item" style="display: flex;">
       <div class="btn-group" role="group">
-        <button type="button" class="btn btn-default" (click) = "viewMode = '1';"><i class="fa fa-file header-mode"></i></button>
-        <button type="button" class="btn btn-default"(click) = "viewMode = '2';"><i class="fa fa-list header-mode"></i></button>
+        <button type="button" class="btn btn-default" (click) = "viewMode = '1';"><i class="dlt-c8y-icon-files header-mode"></i></button>
+        <button type="button" class="btn btn-default"(click) = "viewMode = '2';"><i class="dlt-c8y-icon-list header-mode"></i></button>
       </div>
 
        <div class="btn-group device-list-switch-toggle ">
@@ -45,10 +45,9 @@
   
     </div>
   </div>
-  <mat-paginator [style.visibility]="totalRecord === -1? 'hidden': 'visible'" class="device-list-pagination-view" [length]="totalRecord"
-  [pageSizeOptions]="[5,10,20,50,100]" [pageSize]="pageSize" (page)="getPageEvent($event)"></mat-paginator>
+  <pagination  [style.visibility]="totalRecord === -1? 'hidden': 'visible'" class="m-t-8 m-r-8 p-b-8 pull-right" previousText=" " nextText=" "  [maxSize]="10" [totalItems]="totalRecord" [itemsPerPage]="pageSize" [(ngModel)]="currentPage" (pageChanged)="getPageEvent($event)"></pagination>
   <div style="text-align: center;"><c8y-loading *ngIf="isBusy"></c8y-loading></div>
-  <div *ngIf="!isBusy && totalRecord > 0 ; else noRecordFound"> 
+  <div *ngIf="!isBusy && totalRecord > 0 ; else noRecordFound" class="col-sm-12 col-xs-12"> 
     <div class="card-wrapper" *ngIf="viewMode !== '2' && !isBusy">
         <div class="book " *ngFor="let ndevice of filterData" [ngClass]="{'cover': ndevice.isBookOpen === true}">
           <div class="back"></div>
@@ -150,7 +149,7 @@
         </div>
   </div>
   <div *ngIf="viewMode === '2' && !isBusy">
-    <table  mat-table [dataSource]="dataSource" matSort class="device-list-table">
+    <table  mat-table  [dataSource]="dataSource" matSort class="device-list-table">
   
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>

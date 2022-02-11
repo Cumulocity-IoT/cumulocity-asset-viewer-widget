@@ -20,8 +20,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { ApplicationService, IdentityService, InventoryService, UserService, IManagedObject } from '@c8y/client';
-import { AppStateService } from '@c8y/ngx-components';
+import { ApplicationService, IdentityService, InventoryService, UserService, IManagedObject, Realtime } from '@c8y/client';
+import { AppStateService, RealtimeService } from '@c8y/ngx-components';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { skip, takeUntil } from 'rxjs/operators';
@@ -46,6 +46,7 @@ export interface DeviceData {
   styleUrls: ['gp-asset-viewer.component.css'],
   // encapsulation: ViewEncapsulation.None
 })
+
 export class GpAssetViewerComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:variable-name
   _config: any = {};
@@ -77,47 +78,48 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   totalRecord = -1;
   onlyProblems = false;
   latestFirmwareVersion = 0;
-  unsubscribeRealTime$ = new Subject<void>();
   bsModalRef: BsModalRef;
   viewMode = '1';
+  allSubscriptions: any = [];
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) { this.dataSource.sort = v; }
   @ViewChild(MatTable, { static: false }) matTable: MatTable<any>;
-
+  
   constructor(private inventoryService: InventoryService,
-              public inventory: InventoryService,
-              private sanitizer: DomSanitizer, private appService: ApplicationService,
-              private deviceListService: GpAssetViewerService,
-              private identityService: IdentityService, private router: Router, private modalService: BsModalService,
-              private userService: UserService, private appStateService: AppStateService) {
-    }
+    public inventory: InventoryService,
+    private realTimeService: Realtime,
+    private sanitizer: DomSanitizer, private appService: ApplicationService,
+    private deviceListService: GpAssetViewerService,
+    private identityService: IdentityService, private router: Router, private modalService: BsModalService,
+    private userService: UserService, private appStateService: AppStateService) {
+  }
 
   async ngOnInit() {
     this.isBusy = true;
     this.appId = this.deviceListService.getAppId();
     if (!this._config.device && isDevMode()) {
-      this.group = '###';
+      this.group = '18793';
       this._config = {
         // Sample Configuration Data
-        // fpProps: ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
-        // p1Props: [
-        //   { id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable' },
-        //   { id: 'id', label: 'id', value: 'id' },
-        //   { id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName' },
-        //   { id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name' },
-        //   { id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status' }
-        //         ],
-        // p2Props: [
-        //   { id: 'owner', label: 'owner', value: 'owner' },
-        //   { id: 'creationTime', label: 'creationTime', value: 'creationTime' },
-        //   { id: 'type', label: 'type', value: 'type' },
-        //   { id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated' },
-        //   { id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType' }
-        //         ],
-        // otherProp: {
-        //   label: 'Firmware:',
-        //   value: 'id'
-        // }
+       /*  fpProps: ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
+        p1Props: [
+          { id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable' },
+          { id: 'id', label: 'id', value: 'id' },
+          { id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName' },
+          { id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name' },
+          { id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status' }
+                ],
+        p2Props: [
+          { id: 'owner', label: 'owner', value: 'owner' },
+          { id: 'creationTime', label: 'creationTime', value: 'creationTime' },
+          { id: 'type', label: 'type', value: 'type' },
+          { id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated' },
+          { id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType' }
+                ],
+        otherProp: {
+          label: 'Firmware:',
+          value: 'id'
+        } */
       };
       this.configDashboardList = [];
       this.withTabGroup = true;
@@ -169,7 +171,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   async refresh() {
-    this.unsubscribeRealTime$.next();
+    this.clearSubscriptions();
     this.matData = [];
     this.deviceListData = [];
     this.filterData = [];
@@ -188,9 +190,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
    * This method will called during page navigation
    */
   getPageEvent(pageEvent) {
-    this.pageSize = pageEvent.pageSize;
-    this.currentPage = pageEvent.pageIndex + 1;
-    this.unsubscribeRealTime$.next();
+    this.currentPage = pageEvent.page;
+    this.clearSubscriptions();
     this.matData = [];
     this.deviceListData = [];
     this.filterData = [];
@@ -209,27 +210,27 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
     // Get list of devices for given group
     const response = await this.deviceListService.getDeviceList(this.group, this.pageSize, this.currentPage, this.showChildDevices);
-    if (response.data && response.data.length < this.pageSize) {
-       this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
-     } else {
-       this.totalRecord = this.pageSize * response.paging.totalPages;
-     }
+      if (response.data && response.data.length < this.pageSize) {
+        this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
+      } else {
+        this.totalRecord = this.pageSize * response.paging.totalPages;
+      }
     if (response.data && response.data.length > 0) {
       await this.asyncForEach(response.data, async (x) => {
         await this.loadBoxes(x);
         await this.loadMatData(x);
         let externalData;
-        if (this.isRuntimeExternalId || !x.deviceExternalDetails) {
+        if (this.isRuntimeExternalId && !x.deviceExternalDetails) {
           externalData = await this.getExternalId(x.id);
           if (externalData && (!x.deviceExternalDetails || x.deviceExternalDetails.externalId !== externalData.externalId)) {
             await this.updateDeviceObjectForExternalId(x.id, externalData);
           }
-       }
+        }
         if (this.realtimeState) {
           this.handleReatime(x.id);
         }
       });
-    //  this.matTableLoadAndFilter();
+      //  this.matTableLoadAndFilter();
       this.isBusy = false;
       if (this.onlyProblems) {
         this.filterProblems();
@@ -251,7 +252,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     };
     const promArr = new Array();
     let availability = x.c8y_Availability ? x.c8y_Availability.status : undefined;
-    alertDesc = (x.hasOwnProperty('c8y_IsAsset')) ?  await this.deviceListService.getAlarmsForAsset(x) : this.checkAlarm(x, alertDesc);
+    alertDesc = (x.hasOwnProperty('c8y_IsAsset')) ? await this.deviceListService.getAlarmsForAsset(x) : this.checkAlarm(x, alertDesc);
     this.getAlarmAndAvailabilty(x, promArr).then((res) => {
       x.childDeviceAvailable = [];
       res.forEach(data => {
@@ -263,27 +264,36 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         availability ? availability = this.checkAvailabilty(inventory, availability) : '';
       });
       if (x.c8y_Firmware) {
-          x.firmwareStatus = this.getFirmwareRiskForFilter(x.c8y_Firmware.version);
-        }
+        x.firmwareStatus = this.getFirmwareRiskForFilter(x.c8y_Firmware.version);
+      }
       if (x.c8y_Availability) {
-          x.availability = availability;
-        }
+        x.availability = availability;
+      }
       x.alertDetails = alertDesc;
       this.filterData.push(x);
       this.deviceListData.push(x);
-   });
+    });
   }
 
   handleReatime(id) {
-     this.inventoryService.detail$(id, {
-          hot: true,
-          realtime: true
-        })
-        .pipe(skip(1))
-        .pipe(takeUntil(this.unsubscribeRealTime$)) // skiping first instance since we already get latest data from init call
-        .subscribe((data) => {
-            this.manageRealtime(data[0]);
-    });
+    // REALTIME ------------------------------------------------------------------------
+    const manaogedObjectChannel = `/managedobjects/${id}`;
+    const detailSubs = this.realTimeService.subscribe(
+      manaogedObjectChannel,
+      (resp) => {
+        const data = (resp.data ? resp.data.data : {});
+        this.manageRealtime(data);
+      }
+    );
+    if (this.realtimeState) {
+      this.allSubscriptions.push({
+        id: id,
+        subs: detailSubs,
+        type: 'Realtime',
+      });
+    } else {
+      this.realTimeService.unsubscribe(detailSubs);
+    }
   }
 
   manageRealtime(updatedDeviceData) {
@@ -334,7 +344,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
     const promArr = new Array();
     let availability = x.c8y_Availability ? x.c8y_Availability.status : undefined;
-    alertDesc = (x.hasOwnProperty('c8y_IsAsset')) ?  await this.deviceListService.getAlarmsForAsset(x) : this.checkAlarm(x, alertDesc);
+    alertDesc = (x.hasOwnProperty('c8y_IsAsset')) ? await this.deviceListService.getAlarmsForAsset(x) : this.checkAlarm(x, alertDesc);
     this.getAlarmAndAvailabilty(x, promArr).then((res) => {
       const deviceData: DeviceData = {};
       res.forEach(data => {
@@ -365,27 +375,27 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         if (element === 'Other' && this.getTheValue(x, this.otherProp.value) !== undefined) {
           deviceData.other = this.getTheValue(x, this.otherProp.value);
         }
-    });
+      });
       this.matData.push(deviceData);
       this.matTableLoadAndFilter();
-   });
+    });
   }
 
   getAlarmAndAvailabilty(device?: any, promArr?: any[]): any {
 
-   if (device.childDevices.references.length > 0) {
+    if (device.childDevices.references.length > 0) {
       device.childDevices.references.forEach(async dev => {
         promArr.push(this.inventoryService.detail(dev.managedObject.id));
-    });
+      });
+    }
+    return Promise.all(promArr);
   }
-   return Promise.all(promArr);
-}
 
   checkAvailabilty(inventory, availability): any {
     if (inventory.c8y_Availability && inventory.c8y_Availability.status) {
       inventory.c8y_Availability.status === 'UNAVAILABLE'
-      // tslint:disable-next-line:no-unused-expression
-      ? availability = 'Partial' : '';
+        // tslint:disable-next-line:no-unused-expression
+        ? availability = 'Partial' : '';
     }
     return availability;
   }
@@ -424,7 +434,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
   // Filter conditioan for Material Table
   matFilterConditions(x: any, filterValue) {
-     return !filterValue || x.id.includes(filterValue) ||
+    return !filterValue || x.id.includes(filterValue) ||
       x.name.toLowerCase().includes(filterValue.toLowerCase()) ||
       (x.externalId && x.externalId.toLowerCase().includes(filterValue.toLowerCase())) ||
       (x.availability && x.availability.toLowerCase().includes(filterValue.toLowerCase())) ||
@@ -446,7 +456,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         this.handleReatime(x.id);
       });
     } else {
-      this.unsubscribeRealTime$.next();
+      this.clearSubscriptions();
     }
   }
 
@@ -481,7 +491,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     } else if (deviceType) {
       this.router.navigate([`/device/${deviceId}`]);
     }
-   }
+  }
 
   loadText(alarm) {
     let alarmsStatus = '';
@@ -503,7 +513,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   isAlerts(alarm) {
-    if (alarm ===  undefined) {return false; }
+    if (alarm === undefined) { return false; }
 
     return (alarm.critical && alarm.critical > 0) || (alarm.major && alarm.major > 0)
       || (alarm.minor && alarm.minor > 0)
@@ -590,19 +600,19 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     if (this.filterValue) {
       this.filterData = this.filterData.filter(x => {
         return x.id.includes(this.filterValue) ||
-        x.name.toLowerCase().includes(this.filterValue.toLowerCase()) ||
+          x.name.toLowerCase().includes(this.filterValue.toLowerCase()) ||
           (x.deviceExternalDetails && x.deviceExternalDetails.externalId.toLowerCase().includes(this.filterValue.toLowerCase())) ||
           (x.availability && x.availability.toLowerCase().includes(this.filterValue.toLowerCase())) ||
           (x.c8y_Firmware && x.c8y_Firmware.version &&
             this.getFirmwareRiskForFilter(x.c8y_Firmware.version).toLowerCase().includes(this.filterValue.toLowerCase())) ||
           (x.alertDetails && this.isAlerts(x.alertDetails) && (
-          this.isAlertCritical(x.alertDetails) && 'critical'.includes(this.filterValue.toLowerCase()) ||
-          this.isAlertMajor(x.alertDetails) && 'major'.includes(this.filterValue.toLowerCase()) ||
-          this.isAlertMinor(x.alertDetails) && 'minor'.includes(this.filterValue.toLowerCase()) ||
-          this.isAlertWarning(x.alertDetails) && 'warning'.includes(this.filterValue.toLowerCase())
+            this.isAlertCritical(x.alertDetails) && 'critical'.includes(this.filterValue.toLowerCase()) ||
+            this.isAlertMajor(x.alertDetails) && 'major'.includes(this.filterValue.toLowerCase()) ||
+            this.isAlertMinor(x.alertDetails) && 'minor'.includes(this.filterValue.toLowerCase()) ||
+            this.isAlertWarning(x.alertDetails) && 'warning'.includes(this.filterValue.toLowerCase())
           ));
       });
-     } else {
+    } else {
       this.filterData = this.deviceListData;
     }
     this.dataSource.filter = this.filterValue;
@@ -615,7 +625,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   filterProblems() {
     if (this.onlyProblems) {
       this.filterData = this.filterData.filter(x => {
-       return this.toggleFilter(x);
+        return this.toggleFilter(x);
       });
       this.filterValue = this.filterValue;
       this.dataSource.data = this.matData.filter(x => this.matToggleFilter(x));
@@ -653,7 +663,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     return false;
   }
 
-   // applied when Attention Required toggle is trigger
+  // applied when Attention Required toggle is trigger
   matToggleFilter(x: any) {
     return (this.checkPropForFilter('availability') && x.availability && x.availability.toLowerCase().includes('unavailable')) ||
       (this.checkPropForFilter('availability') && x.availability && x.availability.toLowerCase().includes('partial')) ||
@@ -710,8 +720,17 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeRealTime$.next();
-    this.unsubscribeRealTime$.complete();
+   this.clearSubscriptions();
   }
 
+  /**
+   * Clear all Realtime subscriptions
+   */
+   private clearSubscriptions() {
+    if (this.allSubscriptions) {
+      this.allSubscriptions.forEach((s) => {
+        this.realTimeService.unsubscribe(s.subs);
+      });
+    }
+  }
 }

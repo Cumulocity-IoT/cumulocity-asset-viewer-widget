@@ -78,13 +78,12 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   totalRecord = -1;
   onlyProblems = false;
   latestFirmwareVersion = 0;
-  unsubscribeRealTime$ = new Subject<void>();
   bsModalRef: BsModalRef;
   viewMode = '1';
+  allSubscriptions: any = [];
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) { this.dataSource.sort = v; }
   @ViewChild(MatTable, { static: false }) matTable: MatTable<any>;
-  detailSubs;
   
   constructor(private inventoryService: InventoryService,
     public inventory: InventoryService,
@@ -99,28 +98,28 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     this.isBusy = true;
     this.appId = this.deviceListService.getAppId();
     if (!this._config.device && isDevMode()) {
-      this.group = '###';
+      this.group = '18793';
       this._config = {
         // Sample Configuration Data
-        // fpProps: ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
-        // p1Props: [
-        //   { id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable' },
-        //   { id: 'id', label: 'id', value: 'id' },
-        //   { id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName' },
-        //   { id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name' },
-        //   { id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status' }
-        //         ],
-        // p2Props: [
-        //   { id: 'owner', label: 'owner', value: 'owner' },
-        //   { id: 'creationTime', label: 'creationTime', value: 'creationTime' },
-        //   { id: 'type', label: 'type', value: 'type' },
-        //   { id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated' },
-        //   { id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType' }
-        //         ],
-        // otherProp: {
-        //   label: 'Firmware:',
-        //   value: 'id'
-        // }
+       /*  fpProps: ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
+        p1Props: [
+          { id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable' },
+          { id: 'id', label: 'id', value: 'id' },
+          { id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName' },
+          { id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name' },
+          { id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status' }
+                ],
+        p2Props: [
+          { id: 'owner', label: 'owner', value: 'owner' },
+          { id: 'creationTime', label: 'creationTime', value: 'creationTime' },
+          { id: 'type', label: 'type', value: 'type' },
+          { id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated' },
+          { id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType' }
+                ],
+        otherProp: {
+          label: 'Firmware:',
+          value: 'id'
+        } */
       };
       this.configDashboardList = [];
       this.withTabGroup = true;
@@ -172,7 +171,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   async refresh() {
-    this.unsubscribeRealTime$.next();
+    this.clearSubscriptions();
     this.matData = [];
     this.deviceListData = [];
     this.filterData = [];
@@ -191,9 +190,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
    * This method will called during page navigation
    */
   getPageEvent(pageEvent) {
-    this.pageSize = pageEvent.pageSize;
-    this.currentPage = pageEvent.pageIndex + 1;
-    this.unsubscribeRealTime$.next();
+    this.currentPage = pageEvent.page;
+    this.clearSubscriptions();
     this.matData = [];
     this.deviceListData = [];
     this.filterData = [];
@@ -212,17 +210,17 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
     // Get list of devices for given group
     const response = await this.deviceListService.getDeviceList(this.group, this.pageSize, this.currentPage, this.showChildDevices);
-    if (response.data && response.data.length < this.pageSize) {
-      this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
-    } else {
-      this.totalRecord = this.pageSize * response.paging.totalPages;
-    }
+      if (response.data && response.data.length < this.pageSize) {
+        this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
+      } else {
+        this.totalRecord = this.pageSize * response.paging.totalPages;
+      }
     if (response.data && response.data.length > 0) {
       await this.asyncForEach(response.data, async (x) => {
         await this.loadBoxes(x);
         await this.loadMatData(x);
         let externalData;
-        if (this.isRuntimeExternalId || !x.deviceExternalDetails) {
+        if (this.isRuntimeExternalId && !x.deviceExternalDetails) {
           externalData = await this.getExternalId(x.id);
           if (externalData && (!x.deviceExternalDetails || x.deviceExternalDetails.externalId !== externalData.externalId)) {
             await this.updateDeviceObjectForExternalId(x.id, externalData);
@@ -279,29 +277,23 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
   handleReatime(id) {
     // REALTIME ------------------------------------------------------------------------
-    // tslint:disable-next-line: deprecation
     const manaogedObjectChannel = `/managedobjects/${id}`;
-    this.detailSubs = this.realTimeService.subscribe(
+    const detailSubs = this.realTimeService.subscribe(
       manaogedObjectChannel,
       (resp) => {
-
         const data = (resp.data ? resp.data.data : {});
-        // this.updateMarkerPosition(data);
-        this.manageRealtime(data[0]);
+        this.manageRealtime(data);
       }
     );
-
-
-
-    //  this.inventoryService.detail$(id, {
-    //       hot: true,
-    //       realtime: true
-    //     })
-    //     .pipe(skip(1))
-    //     .pipe(takeUntil(this.unsubscribeRealTime$)) // skiping first instance since we already get latest data from init call
-    //     .subscribe((data) => {
-    //         this.manageRealtime(data[0]);
-    // });
+    if (this.realtimeState) {
+      this.allSubscriptions.push({
+        id: id,
+        subs: detailSubs,
+        type: 'Realtime',
+      });
+    } else {
+      this.realTimeService.unsubscribe(detailSubs);
+    }
   }
 
   manageRealtime(updatedDeviceData) {
@@ -464,7 +456,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
         this.handleReatime(x.id);
       });
     } else {
-      this.unsubscribeRealTime$.next();
+      this.clearSubscriptions();
     }
   }
 
@@ -728,9 +720,17 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeRealTime$.next();
-    this.unsubscribeRealTime$.complete();
-    this.realTimeService.unsubscribe(this.detailSubs);
+   this.clearSubscriptions();
   }
 
+  /**
+   * Clear all Realtime subscriptions
+   */
+   private clearSubscriptions() {
+    if (this.allSubscriptions) {
+      this.allSubscriptions.forEach((s) => {
+        this.realTimeService.unsubscribe(s.subs);
+      });
+    }
+  }
 }

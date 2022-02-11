@@ -30,7 +30,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 * This widget support runtime deployment. Download [Runtime Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.6/asset-viewer-runtime-widget-1.0.6.zip)  and follow runtime deployment instructions from [here](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
   
 
-### Installation of widget through App Builder or Cockipt Deployment?
+### Installation of widget through App Builder
   
 
 **Supported Cumulocity Environments:**
@@ -38,9 +38,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 
 *  **App Builder:** Tested with Cumulocity App Builder version 1.2.6.  
 
-*  **Cockpit Application:** Tested with Cockpit 1009.0.4 with [Patch Fix](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
 
-  
 **Requirements:**
 
 * Git

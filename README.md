@@ -49,7 +49,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 
 * Git
 
-* NodeJS (release builds are currently built with `v12.19.0`)
+* NodeJS (release builds are currently built with `v14.18.0`)
 
 * NPM (Included with NodeJS)
 
@@ -137,7 +137,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
   
 * Git  
 
-* NodeJS (release builds are currently built with `v12.19.0`)
+* NodeJS (release builds are currently built with `v14.18.0`)
   
 
 * NPM (Included with NodeJS)

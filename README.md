@@ -3,6 +3,13 @@
   
 The Cumulocity Asset Viewer Widget help you to display assets/devices data in Tile/Grid view, along with navigation to template dashboards(App Builder only). This widget also supports various features such as display child devices/assets, configuration of fields/columns, search, display only assets/devices where attentions required, server side pagination, etc.
 
+### Please choose Device at Risk Widget release based on Cumulocity/Application builder version:
+
+|APPLICATION BUILDER | CUMULOCITY | DEVICE AT RISK WIDGET |
+|--------------------|------------|-----------------------|
+| 1.3.x              | >= 1011.x.x| 2.x.x                 |
+| 1.2.x              | 1010.x.x   | 1.x.x                 |  
+
 ![Asset Viewer Image](https://user-images.githubusercontent.com/32765455/128975492-4fa026c0-5fef-473c-a123-847582e6a4c6.png)
 
 ## Features
@@ -27,7 +34,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
   
 ### Runtime Widget Deployment?
 
-* This widget support runtime deployment. Download [Runtime Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.6/asset-viewer-runtime-widget-1.0.6.zip)  and follow runtime deployment instructions.
+* This widget support runtime deployment. Download [Runtime Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.0/asset-viewer-runtime-widget-2.0.0.zip)  and follow runtime deployment instructions.
   
 
 ### Installation of widget through App Builder or Cockipt Deployment?
@@ -36,10 +43,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 **Supported Cumulocity Environments:**
   
 
-*  **App Builder:** Tested with Cumulocity App Builder version 1.2.6.  
-
-*  **Cockpit Application:** Tested with Cockpit 1009.0.4 with [Patch Fix](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
-
+*  **App Builder:** Tested with Cumulocity App Builder version 1.3.0.  
   
 **Requirements:**
 
@@ -53,9 +57,9 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 
 ```
 
-"@angular/material": "^8.2.3"
+"@angular/material": "^11.1.2"
 
-"@ng-select/ng-select": "^3.7.3"
+"@ng-select/ng-select": "^6.1.0"
 
 ```
 
@@ -70,10 +74,10 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 
     ```
 
-    npm i @angular/material@8.2.3 @ng-select/ng-select@3.7.3
+    npm i @angular/material@11.1.2 @ng-select/ng-select@6.1.0
 
     ```
-2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.6/gp-asset-viewer-1.0.6.tgz)**.
+2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.0/gp-asset-viewer-2.0.0.tgz)**.
 
 
 3. Install the Binary file in app builder.
@@ -119,78 +123,6 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 
     // Deploy App
 
-
-    npm run deploy
-
-
-    ```
-  
-
-**Installation Steps For Cockpit:**
-  
-
-**Note:** If you are new to Cockpit or not yet created any cockpit application then please follow [Web SDK for Angular](https://cumulocity.com/guides/web/angular/) before proceeding further.
-
-
-1. Open Your existing Cockpit/Cumulocity project and install external dependencies by executing below command or install it manually.
-
-    ```
-
-    npm i @angular/material@8.2.3 @ng-select/ng-select@3.7.3
-
-    ```
-
-2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.6/gp-asset-viewer-1.0.6.tgz)**
-
-3. Install the Binary file in your project.
-
-    ``` 
-    npm i <binary file path>/gp-asset-viewer-x.x.x.tgz
-    ``` 
-
-4. Import GpAssetViewerModule in app.module.ts file located at /cumulocity-app/
-
-    ```
-
-    import {GpAssetViewerModule} from  'gp-asset-viewer';
-
-    @NgModule({
-
-    imports: [
-
-
-    GpAssetViewerModule
-    
-
-    ]
-
-    })
-
-
-    ```
-
-5. Congratulation! Installation is now completed. Now you can run your app locally or build and deploy it into your tenant.
-
-    ```
-
-    //Start Cumulocity App
-
-    
-
-    npm run start
-
-    
-
-    // Build App
-
-    
-
-    npm run build
-
-
-    // Deploy App
-
-    
 
     npm run deploy
 

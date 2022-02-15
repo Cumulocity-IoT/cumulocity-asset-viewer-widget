@@ -1,5 +1,5 @@
 
-  # Cumulocity Asset Viewer Widget[<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.6/asset-viewer-runtime-widget-1.0.6.zip)
+  # Cumulocity Asset Viewer Widget[<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/1.0.6/asset-viewer-runtime-widget-2.0.0.zip)
   
 The Cumulocity Asset Viewer Widget help you to display assets/devices data in Tile/Grid view, along with navigation to template dashboards(App Builder only). This widget also supports various features such as display child devices/assets, configuration of fields/columns, search, display only assets/devices where attentions required, server side pagination, etc.
 

@@ -5,7 +5,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
 
 ### Please choose Cumulocity Asset Viewer Widget release based on Cumulocity/Application builder version:
 
-|APPLICATION BUILDER | CUMULOCITY | DEVICE AT RISK WIDGET |
+|APPLICATION BUILDER | CUMULOCITY | Cumulocity Asset Viewer Widget |
 |--------------------|------------|-----------------------|
 | 1.3.x              | >= 1011.x.x| 2.x.x                 |
 | 1.2.x              | 1010.x.x   | 1.x.x                 |  

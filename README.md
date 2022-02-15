@@ -3,7 +3,7 @@
   
 The Cumulocity Asset Viewer Widget help you to display assets/devices data in Tile/Grid view, along with navigation to template dashboards(App Builder only). This widget also supports various features such as display child devices/assets, configuration of fields/columns, search, display only assets/devices where attentions required, server side pagination, etc.
 
-### Please choose Device at Risk Widget release based on Cumulocity/Application builder version:
+### Please choose Cumulocity Asset Viewer Widget release based on Cumulocity/Application builder version:
 
 |APPLICATION BUILDER | CUMULOCITY | DEVICE AT RISK WIDGET |
 |--------------------|------------|-----------------------|

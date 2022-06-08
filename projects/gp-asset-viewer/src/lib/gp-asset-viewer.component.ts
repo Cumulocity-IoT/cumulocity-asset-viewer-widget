@@ -395,7 +395,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     if (inventory.c8y_Availability && inventory.c8y_Availability.status) {
       inventory.c8y_Availability.status === 'UNAVAILABLE'
         // tslint:disable-next-line:no-unused-expression
-        ? availability = 'Partial' : '';
+        ? availability = 'UNAVAILABLE' : '';
     }
     return availability;
   }

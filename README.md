@@ -1,5 +1,5 @@
 
-  # Cumulocity Asset Viewer Widget[<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.0/asset-viewer-runtime-widget-2.0.0.zip)
+  # Cumulocity Asset Viewer Widget[<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.1/asset-viewer-runtime-widget-2.0.1.zip)
   
 The Cumulocity Asset Viewer Widget help you to display assets/devices data in Tile/Grid view, along with navigation to template dashboards(App Builder only). This widget also supports various features such as display child devices/assets, configuration of fields/columns, search, display only assets/devices where attentions required, server side pagination, etc.
 
@@ -38,7 +38,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
   
 ### Runtime Widget Deployment?
 
-* This widget support runtime deployment. Download [Runtime Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.0/asset-viewer-runtime-widget-2.0.0.zip)  and follow runtime deployment instructions.
+* This widget support runtime deployment. Download [Runtime Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.1/asset-viewer-runtime-widget-2.0.1.zip)  and follow runtime deployment instructions.
   
 
 ### Installation of widget through App Builder
@@ -81,7 +81,7 @@ The Cumulocity Asset Viewer Widget help you to display assets/devices data in Ti
     npm i @angular/material@11.1.2 @ng-select/ng-select@6.1.0
 
     ```
-2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.0/gp-asset-viewer-2.0.0.tgz)**.
+2. Grab the Asset Viewer widget **[Latest Release Binary](https://github.com/SoftwareAG/cumulocity-asset-viewer-widget/releases/download/2.0.1/gp-asset-viewer-2.0.1.tgz)**.
 
 
 3. Install the Binary file in app builder.

@@ -19,7 +19,7 @@
     <div id="search" class="input-group input-group-search">
         <input
           type="search"
-          class="form-control"
+          class="form-control inputTheme"
           placeholder="Enter Device Name, Id, External Id, Alerts Type, etc."
           (keyup)="applyFilter()" [(ngModel)]="filterValue"
         />
@@ -36,7 +36,7 @@
     </div>
     <div class="header-item">
       <div class="refresh-panel">
-        <button type="button" class="btn btn-link c8y-realtime" title="Toggle realtime" (click)="toggle()">
+        <button type="button" class="btn btn-link c8y-realtime btnTheme" title="Toggle realtime" (click)="toggle()">
           <span [ngClass]="realtimeState ? 'c8y-pulse active' : 'c8y-pulse inactive'"></span>
           <span>Realtime</span>
         </button>

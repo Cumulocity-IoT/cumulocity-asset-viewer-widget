@@ -18,7 +18,7 @@
 import { Component, Input, isDevMode, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ApplicationService, IdentityService, InventoryService, UserService, IManagedObject, Realtime } from '@c8y/client';
 import { AppStateService, RealtimeService } from '@c8y/ngx-components';
@@ -273,6 +273,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.filterData.push(x);
       this.deviceListData.push(x);
     });
+    this.loadAssetImage(x.image).then((image) => x._boxImage = image);
   }
 
   handleReatime(id) {
@@ -464,13 +465,24 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     const identity = await this.identityService.list(deviceId);
     return (identity.data[0] ? identity.data[0] : undefined);
   }
-  getImage(image) {
-    if (image) {
-      return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64,' + image);
-    } else if (this.defaultImageURL) {
-      return this.sanitizer.bypassSecurityTrustResourceUrl(this.defaultImageURL);
-    }
+
+
+  async loadAssetImage(image): Promise<SafeResourceUrl> {
+    if (!image && !this.defaultImageId) {
     return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64,' + ImageData.defaultImage);
+    }
+
+    if (!image && this.defaultImageId) {
+      this.sanitizer.bypassSecurityTrustResourceUrl(this.defaultImageURL);
+    }
+
+    if (image && Number(image)) {
+      const response = await  this.deviceListService.downloadBinary(image) as Response;
+      const binaryBlob = await response.blob();
+      return this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(binaryBlob));
+    }
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64,' + image);
   }
 
   // Navigate URL to dashboard if dashboard is exist

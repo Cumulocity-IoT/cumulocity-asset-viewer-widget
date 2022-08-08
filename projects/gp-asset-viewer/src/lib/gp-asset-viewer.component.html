@@ -97,10 +97,12 @@
              <div class="heading" title="{{ndevice.name}}">{{ndevice.name}}</div>
              <div class="display-text">Device Id:{{ndevice.id}}</div>
              <div class="device-header-image">
-                 <span
+                 <span 
+                   *ngIf="ndevice._boxImage"
                    (click)="navigateURL( ndevice.id, ndevice.type);
                    ndevice.switchToDashboard = true;"><img
-                   [src]="getImage(ndevice.image)"></span>
+                   [src]="ndevice._boxImage"></span>
+                   <c8y-loading *ngIf="!ndevice._boxImage"></c8y-loading>
              </div>
              
               <div class="display-text" *ngIf="ndevice.deviceExternalDetails" title="

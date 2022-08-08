@@ -17,7 +17,7 @@
  */
 
 import { NgModule } from '@angular/core';
-import { CoreModule, HOOK_COMPONENTS } from '@c8y/ngx-components';
+import { CommonModule, CoreModule, HOOK_COMPONENTS } from '@c8y/ngx-components';
 import * as preview from './preview-image';
 import { GpAssetViewerComponent } from './gp-asset-viewer.component';
 import { GpAssetViewerService } from './gp-asset-viewer.service';
@@ -34,6 +34,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
   declarations: [GpAssetViewerComponent, GpAssetViewerConfigComponent],
   imports: [
     CoreModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatTableModule,

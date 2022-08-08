@@ -476,6 +476,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.sanitizer.bypassSecurityTrustResourceUrl(this.defaultImageURL);
     }
 
+    // if content of image variable is a number it is assumed it is a binary id
+    // and therefore the corresponding image is loaded from the binary repository
     if (image && Number(image)) {
       const response = await  this.deviceListService.downloadBinary(image) as Response;
       const binaryBlob = await response.blob();

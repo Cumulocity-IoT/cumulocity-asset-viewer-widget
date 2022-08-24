@@ -32,12 +32,23 @@ export interface DeviceData {
   id?: string;
   name?: string;
   externalId?: string;
+  externalType?: string;
   lastUpdated?: Date;
   firmwareStatus?: string;
   availability?: string;
   alertDetails?: any;
   other?: any;
   type?: any;
+  firmwareName?: string;
+  firmwareVersionIssues?: string;
+  firmwareVersionIssuesName?: string;
+  responseInterval?: string;
+  connectionStatus?: string;
+  communicationMode?: string;
+  hardwareModel?: string;
+  creationTime?: string;
+  owner?: string;
+  childDeviceAvailable?: any;
 }
 
 @Component({
@@ -69,6 +80,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   isRuntimeExternalId = false;
   showChildDevices = false;
   displayedColumns: string[] = ['id', 'name', 'externalId', 'lastUpdated'];
+  displayedColumnsForList: string[] = [];
+  dynamicDisplayColumns = [];
   dataSource = new MatTableDataSource<DeviceData>([]);
   matData = [];
   defaultImageId = null;
@@ -79,12 +92,12 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   onlyProblems = false;
   latestFirmwareVersion = 0;
   bsModalRef: BsModalRef;
-  viewMode = '1';
+  viewMode = '3';
   allSubscriptions: any = [];
   @ViewChild(MatSort, { static: false })
   set sort(v: MatSort) { this.dataSource.sort = v; }
   @ViewChild(MatTable, { static: false }) matTable: MatTable<any>;
-  
+
   constructor(private inventoryService: InventoryService,
     public inventory: InventoryService,
     private realTimeService: Realtime,
@@ -101,25 +114,25 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.group = '18793';
       this._config = {
         // Sample Configuration Data
-       /*  fpProps: ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
-        p1Props: [
-          { id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable' },
-          { id: 'id', label: 'id', value: 'id' },
-          { id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName' },
-          { id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name' },
-          { id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status' }
-                ],
-        p2Props: [
-          { id: 'owner', label: 'owner', value: 'owner' },
-          { id: 'creationTime', label: 'creationTime', value: 'creationTime' },
-          { id: 'type', label: 'type', value: 'type' },
-          { id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated' },
-          { id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType' }
-                ],
-        otherProp: {
-          label: 'Firmware:',
-          value: 'id'
-        } */
+        /*  fpProps: ['Availability', 'ActiveAlarmsStatus', 'Other', 'FirmwareStatus'],
+         p1Props: [
+           { id: 'childDeviceAvailable', label: 'Child devices', value: 'childDeviceAvailable' },
+           { id: 'id', label: 'id', value: 'id' },
+           { id: 'c8y_Firmware.versionIssuesName', label: 'versionIssuesName', value: 'c8y_Firmware.versionIssuesName' },
+           { id: 'c8y_Firmware.name', label: 'firmware name', value: 'c8y_Firmware.name' },
+           { id: 'c8y_Availability.status', label: 'status', value: 'c8y_Availability.status' }
+                 ],
+         p2Props: [
+           { id: 'owner', label: 'owner', value: 'owner' },
+           { id: 'creationTime', label: 'creationTime', value: 'creationTime' },
+           { id: 'type', label: 'type', value: 'type' },
+           { id: 'lastUpdated', label: 'lastUpdated', value: 'lastUpdated' },
+           { id: 'deviceExternalDetails.externalType', label: 'externalType', value: 'deviceExternalDetails.externalType' }
+                 ],
+         otherProp: {
+           label: 'Firmware:',
+           value: 'id'
+         } */
       };
       this.configDashboardList = [];
       this.withTabGroup = true;
@@ -133,12 +146,30 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.isRuntimeExternalId = this._config.isRuntimeExternalId ? this._config.isRuntimeExternalId : false;
       this.defaultImageId = this._config.defaultImageId ? this._config.defaultImageId : null;
       this.pageSize = this._config.pageSize ? this._config.pageSize : this.pageSize;
-      this.viewMode = this._config.defaultListView ? '2' : '1';
+      this.displayedColumnsForList = this._config.selectedInputs ? this._config.selectedInputs : ['id', 'name', 'deviceExternalDetails.externalId', 'lastUpdated','c8y_Availability.status', 'c8y_ActiveAlarmsStatus'];
+      if (this._config.otherPropList && this._config.otherPropList.length > 0) {
+        this._config.otherPropList.forEach((element) => {
+          if (element.label !== '' && element.value !== '') {
+            this.dynamicDisplayColumns.push(element);
+            this.displayedColumnsForList = this.displayedColumnsForList.concat([element.value]);
+          }
+        })
+      }
+      if (this._config.defaultListView) {
+        this.viewMode = this._config.defaultListView;
+      } else {
+        this.viewMode = '3';
+        this._config.defaultListView = '3';
+      }
       this.onlyProblems = this._config.attentionReq ? true : false;
       this.showChildDevices = this._config.showChildDevices ? true : false;
     }
     this.otherProp = this._config.otherProp ? this._config.otherProp : '';
     this.displayedColumns = this.displayedColumns.concat(this._config.fpProps ? this._config.fpProps : []);
+    let index = this.displayedColumnsForList.indexOf('other');
+    if (index !== -1) {
+      this.displayedColumnsForList.splice(index, 1);
+    }
     await this.getFirmwareData();
     this.loadDefaultImage();
   }
@@ -165,9 +196,9 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
           actualValue = actualValue[arr[i]];
         }
       }
-      return actualValue;
+      return JSON.stringify(actualValue);
     }
-    return device[value];
+    return JSON.stringify(device[value]);
   }
 
   async refresh() {
@@ -210,11 +241,11 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
     // Get list of devices for given group
     const response = await this.deviceListService.getDeviceList(this.group, this.pageSize, this.currentPage, this.showChildDevices);
-      if (response.data && response.data.length < this.pageSize) {
-        this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
-      } else {
-        this.totalRecord = this.pageSize * response.paging.totalPages;
-      }
+    if (response.data && response.data.length < this.pageSize) {
+      this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
+    } else {
+      this.totalRecord = this.pageSize * response.paging.totalPages;
+    }
     if (response.data && response.data.length > 0) {
       await this.asyncForEach(response.data, async (x) => {
         await this.loadBoxes(x);
@@ -345,6 +376,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
     const promArr = new Array();
     let availability = x.c8y_Availability ? x.c8y_Availability.status : undefined;
+    //let connectionStatus = x.c8y_Connection ? x.c8y_Connection.status : undefined;
+
     alertDesc = (x.hasOwnProperty('c8y_IsAsset')) ? await this.deviceListService.getAlarmsForAsset(x) : this.checkAlarm(x, alertDesc);
     this.getAlarmAndAvailabilty(x, promArr).then((res) => {
       const deviceData: DeviceData = {};
@@ -360,22 +393,72 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       deviceData.name = x.name;
       deviceData.type = x.type;
       deviceData.lastUpdated = x.lastUpdated;
+      deviceData.creationTime = x.creationTime;
+      deviceData.owner = x.owner ? x.owner : undefined;
+      if (x.childDeviceAvailable) {
+        deviceData.childDeviceAvailable = x.childDeviceAvailable;
+      }
       if (x.deviceExternalDetails) {
         deviceData.externalId = x.deviceExternalDetails.externalId;
       }
-      this._config.fpProps.forEach(element => {
-        if (x.c8y_Firmware && element === 'FirmwareStatus') {
-          deviceData.firmwareStatus = this.getFirmwareRiskForFilter(x.c8y_Firmware.version);
-        }
-        if (x.c8y_Availability && element === 'Availability') {
+      if (x.deviceExternalDetails) {
+        deviceData.externalType = x.deviceExternalDetails.externalType;
+      }
+      if (x.c8y_RequiredAvailability) {
+        deviceData.responseInterval = x.c8y_RequiredAvailability.responseInterval;
+      }
+      if (x.c8y_Connection) {
+        deviceData.connectionStatus = x.c8y_Connection.status;
+      }
+      if (x.c8y_CommunicationMode) {
+        deviceData.communicationMode = x.c8y_CommunicationMode.mode;
+      }
+      if (x.c8y_Hardware) {
+        deviceData.hardwareModel = x.c8y_Hardware.model;
+      }
+      if (this._config.selectedInputs) {
+        this._config.selectedInputs.forEach(element => {
+          if (x.c8y_Firmware && element === 'c8y_Firmware.version') {
+            deviceData.firmwareStatus = this.getFirmwareRiskForFilter(x.c8y_Firmware.version);
+          }
+          if (x.c8y_Firmware && element === 'c8y_Firmware.name') {
+            deviceData.firmwareName = x.c8y_Firmware.name;
+          }
+          if (x.c8y_Firmware && element === 'c8y_Firmware.versionIssues') {
+            deviceData.firmwareVersionIssues = x.c8y_Firmware.versionIssues;
+          }
+          if (x.c8y_Firmware && element === 'c8y_Firmware.versionIssuesName') {
+            deviceData.firmwareVersionIssuesName = x.c8y_Firmware.versionIssuesName;
+          }
+          if (x.c8y_Availability && element === 'c8y_Availability.status') {
+            deviceData.availability = availability;
+          }
+          if (element === 'ActiveAlarmsStatus') {
+            deviceData.alertDetails = alertDesc;
+          }
+          if (element === 'c8y_ActiveAlarmsStatus') {
+            deviceData.alertDetails = alertDesc;
+          }
+          if (element === 'Other' && this.getTheValue(x, this.otherProp.value) !== undefined) {
+            deviceData.other = this.getTheValue(x, this.otherProp.value);
+           // deviceData.other = JSON.stringify(deviceData.other);
+          }
+  
+          if (element === 'other' && this.getTheValue(x, this.otherProp.value) !== undefined) {
+            deviceData.other = this.getTheValue(x, this.otherProp.value);
+           // deviceData.other = JSON.stringify(deviceData.other);
+          }
+        });
+      } else {
+        if (x.c8y_Availability) {
           deviceData.availability = availability;
         }
-        if (element === 'ActiveAlarmsStatus') {
+        if (alertDesc) {
           deviceData.alertDetails = alertDesc;
         }
-        if (element === 'Other' && this.getTheValue(x, this.otherProp.value) !== undefined) {
-          deviceData.other = this.getTheValue(x, this.otherProp.value);
-        }
+      }
+      this.dynamicDisplayColumns.forEach(element => {
+        deviceData[element.value] = this.getTheValue(x, element.value);
       });
       this.matData.push(deviceData);
       this.matTableLoadAndFilter();
@@ -469,7 +552,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
 
   async loadAssetImage(image): Promise<SafeResourceUrl> {
     if (!image && !this.defaultImageId) {
-    return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64,' + ImageData.defaultImage);
+      return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64,' + ImageData.defaultImage);
     }
 
     if (!image && this.defaultImageId) {
@@ -479,7 +562,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     // if content of image variable is a number it is assumed it is a binary id
     // and therefore the corresponding image is loaded from the binary repository
     if (image && Number(image)) {
-      const response = await  this.deviceListService.downloadBinary(image) as Response;
+      const response = await this.deviceListService.downloadBinary(image) as Response;
       const binaryBlob = await response.blob();
       return this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(binaryBlob));
     }
@@ -734,13 +817,13 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-   this.clearSubscriptions();
+    this.clearSubscriptions();
   }
 
   /**
    * Clear all Realtime subscriptions
    */
-   private clearSubscriptions() {
+  private clearSubscriptions() {
     if (this.allSubscriptions) {
       this.allSubscriptions.forEach((s) => {
         this.realTimeService.unsubscribe(s.subs);

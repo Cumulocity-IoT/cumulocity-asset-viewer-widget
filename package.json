@@ -1,6 +1,6 @@
 {
   "name": "cumulocity-asset-viewer-widget",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "The Asset Viewer Widget help you to display asset/device data in Tile/List view, along with navigation to template dashboards(App Builder only).",
   "author": "Darpankumar Lalani - Software AG, Global Presales",
   "license": "Apache 2.0",

@@ -196,7 +196,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
           actualValue = actualValue[arr[i]];
         }
       }
-      return JSON.stringify(actualValue);
+      return actualValue;
     }
     return JSON.stringify(device[value]);
   }

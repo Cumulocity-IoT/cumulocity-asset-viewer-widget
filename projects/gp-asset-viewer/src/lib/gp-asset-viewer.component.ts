@@ -198,6 +198,20 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       }
       return actualValue;
     }
+    return device[value];
+  }
+
+  getTheValueOther(device, value: string) {
+    if (typeof value === 'string' && value.includes('.')) {
+      const arr = value.split('.');
+      let actualValue = device[arr[0]] ? device[arr[0]] : undefined;
+      if (actualValue !== undefined) {
+        for (let i = 1; i < arr.length; i++) {
+          actualValue = actualValue[arr[i]];
+        }
+      }
+      return actualValue;
+    }
     return JSON.stringify(device[value]);
   }
 
@@ -441,12 +455,12 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
           }
           if (element === 'Other' && this.getTheValue(x, this.otherProp.value) !== undefined) {
             deviceData.other = this.getTheValue(x, this.otherProp.value);
-           // deviceData.other = JSON.stringify(deviceData.other);
+            deviceData.other = JSON.stringify(deviceData.other);
           }
   
           if (element === 'other' && this.getTheValue(x, this.otherProp.value) !== undefined) {
             deviceData.other = this.getTheValue(x, this.otherProp.value);
-           // deviceData.other = JSON.stringify(deviceData.other);
+            deviceData.other = JSON.stringify(deviceData.other);
           }
         });
       } else {
@@ -459,6 +473,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       }
       this.dynamicDisplayColumns.forEach(element => {
         deviceData[element.value] = this.getTheValue(x, element.value);
+        deviceData[element.value] = JSON.stringify(this.getTheValue(x, element.value));
       });
       this.matData.push(deviceData);
       this.matTableLoadAndFilter();

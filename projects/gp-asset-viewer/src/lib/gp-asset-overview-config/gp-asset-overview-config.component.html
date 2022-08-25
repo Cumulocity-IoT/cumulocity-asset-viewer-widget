@@ -28,7 +28,7 @@
       <div class="config-accordion" id="collapseFP" *ngIf="isExpandedFP">
         <div class="form-group">
           <ng-select [items]="properties" bindLabel="prop" name="FrontPageProperties" required [multiple]="true"
-            [closeOnSelect]="false" [searchable]="true" placeholder="Select properties" bindValue="prop" appendTo="body"
+            [closeOnSelect]="false" [searchable]="true" placeholder="Select properties" bindValue="prop"
             (change)="onFpChange()" maxSelectedItems="3" [formControl]="props">
           </ng-select>
         </div>
@@ -57,7 +57,7 @@
       <div class="config-accordion" id="isExpandedP1" *ngIf="isExpandedP1">
         <form [formGroup]="p1Props">
           <ng-select [items]="propertiesToDisplay" bindLabel="id" required [multiple]="true" [closeOnSelect]="false"
-            [searchable]="true" placeholder="Select upto 5 properties" appendTo="body" (change)="onP1Change()"
+            [searchable]="true" placeholder="Select upto 5 properties" (change)="onP1Change()"
             maxSelectedItems="5" formControlName="p1Props">
           </ng-select>
         </form>
@@ -100,7 +100,7 @@
       <div class="config-accordion" id="isExpandedP2" *ngIf="isExpandedP2">
         <form [formGroup]="p2Props">
           <ng-select [items]="propertiesToDisplay" bindLabel="id" required [multiple]="true" [closeOnSelect]="false"
-            [searchable]="true" placeholder="Select upto 5 properties" appendTo="body" (change)="onP2Change()"
+            [searchable]="true" placeholder="Select upto 5 properties" (change)="onP2Change()"
             maxSelectedItems="5" formControlName="p2Props">
           </ng-select>
         </form>
@@ -255,7 +255,7 @@
       <div class="col-sm-12" *ngIf="dashboard.type">
         <div class="col-sm-3">
           <ng-select [items]="deviceTypes" bindLabel="type" [closeOnSelect]="false" [searchable]="true"
-            placeholder="Select Device Type" appendTo="body" (change)="addNewRecord(i)" bindValue="type"
+            placeholder="Select Device Type" (change)="addNewRecord(i)" bindValue="type"
             [(ngModel)]="dashboard.type">
           </ng-select>
         </div>

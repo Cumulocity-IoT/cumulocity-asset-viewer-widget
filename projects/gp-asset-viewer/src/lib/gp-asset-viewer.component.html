@@ -140,9 +140,9 @@
               </span>
             </div>
             <div class="fixed-height risk front-page-ellipsis"
-              *ngIf="fpProps === 'Other' && getTheValue(ndevice, otherProp.value) !== undefined"
-              title="{{getTheValue(ndevice, otherProp.value)}}">
-              {{otherProp.label}} {{ getTheValue(ndevice, otherProp.value) }}
+              *ngIf="fpProps === 'Other' && getTheValueOther(ndevice, otherProp.value) !== undefined"
+              title="{{getTheValueOther(ndevice, otherProp.value)}}">
+              {{otherProp.label}} {{ getTheValueOther(ndevice, otherProp.value) }}
             </div>
             <div class="risk " style="text-align: left;"
               *ngIf="ndevice.c8y_Firmware && fpProps === 'FirmwareStatus' && calculateFirmwareRisk(ndevice.c8y_Firmware.version) < 0"

@@ -49,6 +49,7 @@ export interface DeviceData {
   creationTime?: string;
   owner?: string;
   childDeviceAvailable?: any;
+  notes?: any;
 }
 
 @Component({
@@ -408,41 +409,66 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       deviceData.type = x.type;
       deviceData.lastUpdated = x.lastUpdated;
       deviceData.creationTime = x.creationTime;
-      deviceData.owner = x.owner ? x.owner : undefined;
+      deviceData.owner = x.owner ? x.owner : 'Not available';
       if (x.childDeviceAvailable) {
         deviceData.childDeviceAvailable = x.childDeviceAvailable;
       }
       if (x.deviceExternalDetails) {
-        deviceData.externalId = x.deviceExternalDetails.externalId;
+        deviceData.externalId = x.deviceExternalDetails.externalId ? x.deviceExternalDetails.externalId : 'Not available';
+      } else {
+        deviceData.externalId = 'Not available';
       }
       if (x.deviceExternalDetails) {
-        deviceData.externalType = x.deviceExternalDetails.externalType;
+        deviceData.externalType = x.deviceExternalDetails.externalType ? x.deviceExternalDetails.externalType : 'Not available';
+      } else {
+        deviceData.externalType = 'Not available';
       }
       if (x.c8y_RequiredAvailability) {
-        deviceData.responseInterval = x.c8y_RequiredAvailability.responseInterval;
+        deviceData.responseInterval = x.c8y_RequiredAvailability.responseInterval ? x.c8y_RequiredAvailability.responseInterval : 'Not available';
+      } else {
+        deviceData.responseInterval = 'Not available';
       }
       if (x.c8y_Connection) {
-        deviceData.connectionStatus = x.c8y_Connection.status;
+        deviceData.connectionStatus = x.c8y_Connection.status ? x.c8y_Connection.status : 'Not available';
+      } else {
+        deviceData.connectionStatus = 'Not available';
       }
       if (x.c8y_CommunicationMode) {
-        deviceData.communicationMode = x.c8y_CommunicationMode.mode;
+        deviceData.communicationMode = x.c8y_CommunicationMode.mode ? x.c8y_CommunicationMode.mode : 'Not availble';
+      } else {
+        deviceData.communicationMode = 'Not available';
       }
       if (x.c8y_Hardware) {
-        deviceData.hardwareModel = x.c8y_Hardware.model;
+        deviceData.hardwareModel = x.c8y_Hardware.model ? x.c8y_Hardware.model : 'Not available';
+      } else {
+        deviceData.hardwareModel = 'Not available';
+      }
+      if (x.c8y_Notes) {
+        deviceData.notes = x.c8y_Notes;
+      } else {
+        deviceData.notes = 'Not available';
       }
       if (this._config.selectedInputs) {
         this._config.selectedInputs.forEach(element => {
           if (x.c8y_Firmware && element === 'c8y_Firmware.version') {
-            deviceData.firmwareStatus = this.getFirmwareRiskForFilter(x.c8y_Firmware.version);
+            deviceData.firmwareStatus = x.c8y_Firmware.version ? this.getFirmwareRiskForFilter(x.c8y_Firmware.version) : 'Not available';
+          } else {
+            deviceData.firmwareStatus = 'Not available';
           }
           if (x.c8y_Firmware && element === 'c8y_Firmware.name') {
-            deviceData.firmwareName = x.c8y_Firmware.name;
+            deviceData.firmwareName = x.c8y_Firmware.name ? x.c8y_Firmware.name : 'Not available';
+          } else {
+            deviceData.firmwareName = 'Not available';
           }
           if (x.c8y_Firmware && element === 'c8y_Firmware.versionIssues') {
-            deviceData.firmwareVersionIssues = x.c8y_Firmware.versionIssues;
+            deviceData.firmwareVersionIssues = x.c8y_Firmware.versionIssues ? x.c8y_Firmware.versionIssues : 'Not available';
+          } else {
+            deviceData.firmwareVersionIssues = 'Not available';
           }
           if (x.c8y_Firmware && element === 'c8y_Firmware.versionIssuesName') {
-            deviceData.firmwareVersionIssuesName = x.c8y_Firmware.versionIssuesName;
+            deviceData.firmwareVersionIssuesName = x.c8y_Firmware.versionIssuesName ? x.c8y_Firmware.versionIssuesName : 'Not available';
+          } else {
+            deviceData.firmwareVersionIssuesName = 'Not available';
           }
           if (x.c8y_Availability && element === 'c8y_Availability.status') {
             deviceData.availability = availability;

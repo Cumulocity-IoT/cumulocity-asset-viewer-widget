@@ -22,19 +22,28 @@ import { InventoryBinaryService, InventoryService, AlarmService, IResultList, IR
 export class GpAssetViewerService {
 
   devicesAll: any;
+  deviceList: any;
   constructor(private inventoryService: InventoryService, private inventoryBinaryService: InventoryBinaryService,
     private alarmService: AlarmService) { }
 
-  async getDeviceList(DeviceGroup: any, pageSize: any, currentPage: any, onlyChildDevice: boolean) {
-
+  async getDeviceList(DeviceGroup: any, pageSize: any, currentPage: any, onlyChildDevice: boolean,deviceType) {
+    let queryString = '';
+    if(deviceType === 'Assets') {
+        queryString = 'has(c8y_IsAsset)'
+    } else if (deviceType === 'Devices') {
+        queryString = 'has(c8y_IsDevice)'
+    }
     let response: any = null;
     const filter: object = {
       pageSize,
       withTotalPages: true,
-      currentPage
+      currentPage,
+      query: (queryString ? queryString : ''),
     };
-    if (onlyChildDevice) {
+    if (onlyChildDevice && deviceType === 'Devices') {
       response = (await this.inventoryService.childDevicesList(DeviceGroup, filter));
+    } else if (onlyChildDevice && deviceType === 'Assets') {
+      response = (await this.inventoryService.childAssetsList(DeviceGroup, filter));
     } else {
       response = (await this.inventoryService.childAssetsList(DeviceGroup, filter));
     }
@@ -44,8 +53,6 @@ export class GpAssetViewerService {
     }
     return response;
   }
-
-  
 
   public createBinary(file): Promise<IResult<IManagedObjectBinary>> {
     return this.inventoryBinaryService.create(file, {
@@ -127,12 +134,20 @@ export class GpAssetViewerService {
    * @param id ID of the managed object to check for child devices
    * @param pageToGet Number of the page passed to the API
    * @param allDevices Child Devices already found
+   * @param display
    */
-    getChildDevices(id: string, pageToGet: number, allDevices: { data: any[], res: any }): Promise<IResultList<IManagedObject>> {
+    getChildDevices(id: string, pageToGet: number, allDevices: { data: any[], res: any },displayMode): Promise<IResultList<IManagedObject>> {
+      let queryString = '';
+      if (displayMode === 'Devices') {
+        queryString = 'has(c8y_IsDevice)'
+      } else if(displayMode === 'Assets') {
+        queryString = 'has(c8y_IsAsset)'
+      } 
       const inventoryFilter = {
         // fragmentType: 'c8y_IsDevice',
         pageSize: 50,
         withTotalPages: true,
+        query: (queryString ? queryString : ''),
         currentPage: pageToGet
       };
       if (!allDevices) {
@@ -149,7 +164,7 @@ export class GpAssetViewerService {
                   if (resp.data.length < inventoryFilter.pageSize) {
                     resolve(allDevices);
                   } else {
-                    this.getChildDevices(id, resp.paging.nextPage, allDevices)
+                    this.getChildDevices(id, resp.paging.nextPage, allDevices,displayMode)
                       .then((np) => {
                         resolve(allDevices);
                       })

@@ -64,6 +64,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
   _config: any = {};
   otherProp: any;
   tableProps: any;
+  displayMode: any;
   @Input()
   set config(config: any) {
     this._config = config;
@@ -147,7 +148,8 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
       this.isRuntimeExternalId = this._config.isRuntimeExternalId ? this._config.isRuntimeExternalId : false;
       this.defaultImageId = this._config.defaultImageId ? this._config.defaultImageId : null;
       this.pageSize = this._config.pageSize ? this._config.pageSize : this.pageSize;
-      this.displayedColumnsForList = this._config.selectedInputs ? this._config.selectedInputs : ['id', 'name', 'deviceExternalDetails.externalId', 'lastUpdated','c8y_Availability.status', 'c8y_ActiveAlarmsStatus'];
+      this.displayMode = this._config.displayMode ? this._config.displayMode : 'All';
+      this.displayedColumnsForList = this._config.selectedInputs ? this._config.selectedInputs : ['id', 'name', 'deviceExternalDetails.externalId', 'lastUpdated', 'c8y_Availability.status', 'c8y_ActiveAlarmsStatus'];
       if (this._config.otherPropList && this._config.otherPropList.length > 0) {
         this._config.otherPropList.forEach((element) => {
           if (element.label !== '' && element.value !== '') {
@@ -255,7 +257,7 @@ export class GpAssetViewerComponent implements OnInit, OnDestroy {
     this.isBusy = true;
 
     // Get list of devices for given group
-    const response = await this.deviceListService.getDeviceList(this.group, this.pageSize, this.currentPage, this.showChildDevices);
+    const response = await this.deviceListService.getDeviceList(this.group, this.pageSize, this.currentPage, this.showChildDevices, this.displayMode);
     if (response.data && response.data.length < this.pageSize) {
       this.totalRecord = (this.pageSize * (response.paging.totalPages - 1)) + response.data.length;
     } else {

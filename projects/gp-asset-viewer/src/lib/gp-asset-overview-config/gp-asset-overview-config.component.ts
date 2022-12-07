@@ -112,6 +112,10 @@ export class GpAssetViewerConfigComponent implements OnInit, DoCheck {
     if (!this.config.defaultListView) {
       this.config.defaultListView = '3';
     }
+
+    if (!this.config.displayMode) {
+      this.config.displayMode = 'All';
+    }
     if (!this.config.dashboardList && this.appId) {
       const dashboardObj: DashboardConfig = {};
       dashboardObj.type = 'All';
@@ -314,10 +318,17 @@ export class GpAssetViewerConfigComponent implements OnInit, DoCheck {
    */
   getDeviceProperties(id: any) {
     // tslint:disable-next-line:variable-name
+    let queryString: any;
+      if (this.config.displayMode === 'Devices') {
+        queryString = 'has(c8y_IsDevice)'
+      } else if(this.config.displayMode === 'Assets') {
+        queryString = 'has(c8y_IsAsset)'
+      } 
     const _this = this;
     const filter: object = {
       pageSize: 100,
-      withTotalPages: true
+      withTotalPages: true,
+      query: (queryString ? queryString : ''),
     };
     this.invSvc.childAssetsList(id, filter).then(res => {
       res.data.forEach(mo => {
@@ -378,7 +389,7 @@ export class GpAssetViewerConfigComponent implements OnInit, DoCheck {
    */
   private getAllDevices(deviceId: string) {
     const deviceList: any = null;
-    this.deviceListService.getChildDevices(deviceId, 1, deviceList)
+    this.deviceListService.getChildDevices(deviceId, 1, deviceList, this.config.displayMode)
       .then((deviceFound) => {
         this.deviceTypes = Array.from(new Set(deviceFound.data.map(item => item.type)));
         this.deviceTypes = this.deviceTypes.filter(n => n);

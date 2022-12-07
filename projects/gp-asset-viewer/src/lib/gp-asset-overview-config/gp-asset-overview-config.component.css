@@ -1,14 +1,30 @@
-.input-width{
+.input-width {
     width: 100%;
 }
 
 .config-accordion {
- padding-bottom: 10px;
+    padding-bottom: 10px;
 }
+
 .config-accordion label {
- font-size: 12px;
+    font-size: 12px;
 }
+
 .config-accordion input, .config-accordion select, .config-accordion ng-select {
- font-size: 12px;
- margin: 5px;
+    font-size: 12px;
+    margin: 5px;
+}
+
+.displayMode {
+    margin-top: 4px;
+    margin-left: 15px;
+}
+
+.displayList {
+    margin-top: 4px;
+    margin-left: -15px;
+}
+
+.mt-10 {
+    margin-top: 10px;
 }
